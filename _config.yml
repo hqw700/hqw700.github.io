@@ -104,6 +104,6 @@ theme: fluid
 ## Docs: https://hexo.io/docs/one-command-deployment
 deploy:
   type: git
-  repo: https://github.com/hqw700/butu.github.io
-  branch: main
+  repo: https://github.com/hqw700/butu_blog
+  branch: master
   message: update
