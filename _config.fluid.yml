@@ -227,6 +227,61 @@ about:
   icons:
 
 #---------------------------
+# 归档页
+# Archive Page
+#---------------------------
+archive:
+  banner_img: /img/bg/banner.jpg
+  banner_img_height: 50
+  banner_mask_alpha: 0.3
+  subtitle:
+
+
+#---------------------------
+# 分类页
+# Category Page
+#---------------------------
+category:
+  enable: true
+  banner_img: /img/bg/banner.jpg
+  banner_img_height: 50
+  banner_mask_alpha: 0.3
+  subtitle:
+
+  # 单个分类中折叠展示文章数的最大值，超过限制会显示 More
+  # The maximum number of posts in a single category. If the limit is exceeded, it will be displayed More
+  post_limit: 10
+
+  # 排序字段，前面带减号是倒序，不带减号是正序，可选项：name | length
+  # Sort field, with a minus sign is reverse order
+  # Options: name | length
+  order_by: "-length"
+
+  # 层级的折叠深度，0 是全部折叠，大于 0 后如果存在子分类则默认展开
+  # Collapse depth. If 0, all posts collapsed. If greater than 0, it will be expanded by default if there are subcategories
+  collapse_depth: 1
+
+
+#---------------------------
+# 标签页
+# Tag Page
+#---------------------------
+tag:
+  enable: true
+  banner_img: /img/bg/banner.jpg
+  banner_img_height: 50
+  banner_mask_alpha: 0.3
+  subtitle:
+  tagcloud:
+    min_font: 20
+    max_font: 50
+    unit: px
+    start_color: "#800000"
+    end_color: "#337ab7"
+
+#---------------------------
+
+#---------------------------
 # 页脚
 # Footer
 #---------------------------

@@ -1,9 +1,15 @@
 ---
 title: Pixel 3上Android 11源码下载，编译与烧录
 date: 2021/1/1 20:46:25
-tag: [工具使用]
+tag: [Android系统, 教程]
+category: [工具使用]
 excerpt: 本文主要介绍在Pixel 3机器上的AOSP 11源码的下载、编译与烧录。
 ---
+
+> 操作系统：Windows 10 专业版 19042.685
+> 编译机：WSL2 Ubuntu-18.04
+> 手机：Google Pixel 3
+> 源码版本：AOSP android-11.0.0_r1 
 
 研究Android系统最好有一套AOSP源码和一台可以编译运行的机器，下面是我Google Pixel 3上编译官方源码的过程记录。
 ## 一，源码下载
