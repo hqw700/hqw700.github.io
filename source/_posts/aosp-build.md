@@ -14,9 +14,10 @@ excerpt: 本文主要介绍在Pixel 3机器上的AOSP 11源码的下载、编译
 研究Android系统最好有一套AOSP源码和一台可以编译运行的机器，下面是我Google Pixel 3上编译官方源码的过程记录。
 ## 一，源码下载
 ### 1.1 AOSP源码下载
-从清华镜像站下载速度很快  
+将Google的地址`https://android.googlesource.com/kernel/manifest`替换清华的地址`https://aosp.tuna.tsinghua.edu.cn/platform/manifest`下载速度更快  
 加 `--depth 1` 控制git深度可以极大节省硬盘空间。最终.repo目录21G左右  
 ``` bash
+export REPO_URL='https://mirrors.tuna.tsinghua.edu.cn/git/git-repo'
 repo init --depth 1 -u https://aosp.tuna.tsinghua.edu.cn/platform/manifest -b android-11.0.0_r1 
 repo sync -j20
 ```
