@@ -3,7 +3,7 @@ title: Pixel 3上Linux内核源码的下载，编译与烧录
 date: 2021-01-02 16:05:16
 tag: [Android系统, 教程, Linux]
 category: [工具使用]
-excerpt: 本文主要介绍在Pixel 3 Linux内核的编译和烧录, 由于内核版本库没有对应上的原因，最终以失败告终，但总体流程和方法没错。
+excerpt: 本文主要介绍在Pixel 3 Linux内核的编译和烧录, 由于内核版本库没有对应上的原因，最终以失败告终。最后介绍了Pixel 1上编译内核的方法和流程。
 ---
 
 > 操作系统：Windows 10 专业版 19042.685  
@@ -106,7 +106,7 @@ https://android.googlesource.com/kernel/msm/+/5bded8e40b62
 根据版本号里的git id提示，找到该版本对应的分支[https://android.googlesource.com/kernel/msm/+/refs/heads/android-msm-crosshatch-4.9-r-beta-3], 切换过去编译，烧录之后系统可以起来了，但是有很多外设报错：蓝牙，音频等，界面黑屏。点开应用之后系统就重启了。后面也尝试了其它的分支版本，依旧是不能正常运行。  
 
 ## 五，Android 7.1上编译kernel
-之前有在pixel 1 Android7.1上有编译过kernel, 电脑里也有环境，简单再尝试一下。
+在pixel 3 Android 11 折腾无果后，想起之前有在pixel 1 Android7.1上有编译过kernel, 电脑里也有环境，简单再尝试一下。
 ### 5.1 编译和下载
 ``` bash
 mkdir kernel
@@ -142,6 +142,5 @@ Linux version 3.18.31-g6309b4bd (huangqw@DESKTOP-14RLEFF) (gcc version 4.9 20150
 ```
 ## 六，问题总结
 
-失败的原因我猜测是内核版本和硬件库版本对不上。而且kernel库又没随aosp版本建分支和打tag, 直接就对应一个android11主分支，这个分支应该是随着最新的android11分支走的，我aosp 11的分支是最早的android-11.0.0_r1，估计我要切换到最新的rxx才能正常运行，由于切换到最新时间比较长，就先不折腾了，后续有空再弄。  
-但pixel可以采用旧版内核，采用旧的方法就行。
-给大家提供个失败的经验，但主要的流程我觉得是没有问题的。
+pixel 1上采用的是旧的编译内核方式，直接下载对应的git节点编译即可。pixel 3没有了kernel defconfig文件，无法采用这个方式，但同样是切换到目前内核所对应的git节点，依旧也没有成功，估计是在新编译方式操作上，漏了一些。   
+目前我Android 11版本是比较早期的android-11.0.0_r1，而kernel只有个android 11分支，应该是对应的是最新的AOSP分支。所以我要正常运行应该要将我的AOSP分支切到最新，由于切换和重新编译比较耗时，就先不折腾了，后续研究要涉及最新kernel后再弄吧。其实要研究些基本原理，研究旧版的系统会减少一些阻碍，越新的系统机制越复杂。
