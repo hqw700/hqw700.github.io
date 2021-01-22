@@ -22,7 +22,7 @@ interface ITest
     int sum(int x, int y);
 }
 ```
-## 2，用aidl生成ITest.java文件
+## 2，用aidl工具生成java端接口实现
 在aosp源码下载操作，然后第一步就生成错误了
 ``` log
 ~/code/aosp$ out/host/linux-x86/bin/aidl -oframeworks/native/cmds/bindergen/java/src/ frameworks/native/cmds/bindergen/ITest.aidl
