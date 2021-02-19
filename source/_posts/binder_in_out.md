@@ -1,10 +1,9 @@
-
 ---
 title: 一起来学binder — in/out/inout以及oneway的简单示例
-date: 2021-02-05 22:18:23
+date: 2021-02-19 23:13:57
 tag: [binder, Android系统, 教程, github]
 category: [源码分析]
-excerpt: 
+excerpt: binder aidl接口关键字的简单用法和区别
 ---
 
 ## 一，JAVA端使用
@@ -79,7 +78,7 @@ public void sendInOut(Bundle data) throws RemoteException {
 ```
 
 ### 1.5 测试结果 
-log
+logcat
 ``` log
 1973-03-06 03:09:36.760 2744-2744/? D/JAVA_BINDER.Server: This is TestServer
 1973-03-06 03:09:42.601 2753-2753/? D/JAVA_BINDER.Client: This is TestClient
@@ -154,8 +153,8 @@ public:
         String16 rec;
         data.getString(String16("data"), &rec);
         INFO("server: sendIn: receive: %s", String8(rec).string());
-    //        rec.append(String16("server"));
-    //        data->putString(String16("data"), rec);
+//        rec.append(String16("server"));
+//        data->putString(String16("data"), rec);
         return binder::Status();
     }
 
@@ -192,14 +191,23 @@ public:
 1973-03-06 03:42:19.776 2823-2823/? D/cpp_binder: client: after sendInOut: clientserver
 ```
 
-### 三，总结
+## 三，总结
+由测试结果可以看出：  
+1， 在in(默认)模式下，会将内容传递到服务端，但服务端修改的内容不会传回来  
+2， 在out模式下，不会将内容传递到服务端，但服务端修改的内容会传回来  
+3， 在inout模式下，会将内容传递到服务端，服务端修改的内容也会传回来
 
+## 四，oneway
+oneway的用法比较简单，区别就是加了oneway不等待服务端执行完就返回，详细用法可以看代码中的ping()和pingOneway()的区别
 
-
-
-
+## 五，源码与环境
+由于java和cpp采用不同的接口，源码分成两部分。  
+java部分代码在:  
+https://github.com/hqw700/binderdemo/releases/tag/v0.5.1  
+cpp部分代码在:  
+https://github.com/hqw700/binderdemo/releases/tag/v0.5.2
 
 > 操作系统：Windows 10 专业版 19042.685  
 > 编译机：WSL2 Ubuntu-18.04  
-> 手机：Google Pixel 1 
+> 手机：Google Pixel 1  
 > 源码版本：AOSP android-7.1.1_r35
