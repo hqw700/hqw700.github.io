@@ -100,10 +100,21 @@ android-msm-crosshatch-4.9-r-beta-3
  grep -a 'Linux version' Image.lz4
  Linux version 4.9.232 ...
 ```
-### 4.2 切换对应的内核版本
+### ~~4.2切换对应的内核版本~~
 https://android.googlesource.com/kernel/msm/+/5bded8e40b62
 
 根据版本号里的git id提示，找到该版本对应的分支[https://android.googlesource.com/kernel/msm/+/refs/heads/android-msm-crosshatch-4.9-r-beta-3], 切换过去编译，烧录之后系统可以起来了，但是有很多外设报错：蓝牙，音频等，界面黑屏。点开应用之后系统就重启了。后面也尝试了其它的分支版本，依旧是不能正常运行。  
+
+### 4.3 **Kyr1os**同学邮件提供的修复方法  -- 20210720 add
+> hqw700, 您好   
+我最近在 Pixel 3 上编译 Android11, 参考了您的文章：https://hqw700.github.io/2021/01/02/aosp-kernel-build/。遇到了和您同样的问题。  
+在查阅资料后我找到了这篇帖子：https://groups.google.com/g/android-building/c/ou630PviyDc  
+使用以下命令后解决了问题。  
+adb root  
+adb remount -R  
+adb push ../kernel/out/android-msm-pixel-4.9/dist/*.ko /vendor/lib/modules  
+供参考  
+Kyr1os
 
 ## 五，Android 7.1上编译kernel
 在pixel 3 Android 11 折腾无果后，想起之前有在pixel 1 Android7.1上有编译过kernel, 电脑里也有环境，简单再尝试一下。
@@ -142,5 +153,5 @@ Linux version 3.18.31-g6309b4bd (huangqw@DESKTOP-14RLEFF) (gcc version 4.9 20150
 ```
 ## 六，问题总结
 
-pixel 1上采用的是旧的编译内核方式，直接下载对应的git节点编译即可。pixel 3没有了kernel defconfig文件，无法采用这个方式，但同样是切换到目前内核所对应的git节点，依旧也没有成功，估计是在新编译方式操作上，漏了一些。   
+pixel 1上采用的是旧的编译内核方式，直接下载对应的git节点编译即可。pixel 3没有了kernel defconfig文件，无法采用这个方式，但同样是切换到目前内核所对应的git节点，依旧也没有成功，估计是在新编译方式操作上，漏了一些(补上4.3操作即可 -- 20210720 add)。   
 目前我Android 11版本是比较早期的android-11.0.0_r1，而kernel只有个android 11分支，应该是对应的是最新的AOSP分支。所以我要正常运行应该要将我的AOSP分支切到最新，由于切换和重新编译比较耗时，就先不折腾了，后续研究要涉及最新kernel后再弄吧。其实要研究些基本原理，研究旧版的系统会减少一些阻碍，越新的系统机制越复杂。
