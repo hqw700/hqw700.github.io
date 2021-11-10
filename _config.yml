@@ -112,6 +112,6 @@ theme: fluid
 ## Docs: https://hexo.io/docs/one-command-deployment
 deploy:
   type: git
-  repo: https://github.com/hqw700/hqw700.github.io
+  repo: git@github.com:hqw700/hqw700.github.io.git
   branch: master
   message: update

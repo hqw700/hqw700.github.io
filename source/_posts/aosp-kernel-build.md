@@ -90,6 +90,12 @@ fastboot boot boot.img          ## 从新内核启动，但不烧录，重启会
 fastboot flash boot boot.img    ## 烧录新内核
 ```
 
+### 3.3 烧录dtbo.img
+如果修改了设备树，还需要烧录dtbo.img，生成在kernel\out\android-msm-pixel-4.9\dist\dtbo.img
+``` bash
+fastboot flash dtbo dtbo.img
+```
+
 ## 四，验证
 ### 4.1 查看内核版本
 手机内：
