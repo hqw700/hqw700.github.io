@@ -3,19 +3,15 @@ title: Pixel 3上Linux内核源码的下载，编译与烧录
 date: 2021-01-02 16:05:16
 tag: [Android系统, 教程, Linux]
 category: [工具使用]
-excerpt: 本文主要介绍在Pixel 3 Linux内核的编译和烧录, 由于内核版本库没有对应上的原因，最终以失败告终。最后介绍了Pixel 1上编译内核的方法和流程。
+excerpt: (2021-11-10 重新编辑) 本文主要介绍在Pixel 3 Linux内核源码下载，编译和烧录。
 ---
 
-> 操作系统：Windows 10 专业版 19042.685  
-> 编译机：WSL2 Ubuntu-18.04  
-> 手机：Google Pixel 3 Android 11  
-> 源码版本：kernel android-msm-crosshatch-4.9-android11
-
-官方教程地址https://source.android.com/setup/build/building-kernels#id-version, 已经写的很详细了, pixel 3建议下载的是android-msm-crosshatch-4.9-android11分支（此处是个坑，后面会提到）
+官方教程地址https://source.android.com/setup/build/building-kernels, 已经写的很详细了, 由于翻译不及时，不同语言页面下显示的分支不一致，都可以使用。
 ## 一，源码下载
 ### 1.1 AOSP源码下载
 依旧是将Google的地址`android.googlesource.com`替换清华的地址`aosp.tuna.tsinghua.edu.cn` 
 加 `--depth 1` 控制git深度可以极大节省硬盘空间。最终.repo目录21G左右  
+注：kernel分支不需要和aosp分支对应。
 ``` bash
 export REPO_URL='https://mirrors.tuna.tsinghua.edu.cn/git/git-repo'
 repo init --depth 1 -u https://aosp.tuna.tsinghua.edu.cn/kernel/manifest -b android-msm-crosshatch-4.9-android11
@@ -80,14 +76,21 @@ make[3]: *** Waiting for unfinished jobs....
 
 
 ## 三，烧录
+### 3.1 **【重要】** 先push生成的ko文件到/vendor/lib/modules下
+```
+adb root
+adb remount -R
+adb push ../kernel/out/android-msm-pixel-4.9/dist/*.ko /vendor/lib/modules
+```
+
+### 3.2 fastboot 更新bootimg
 ``` bash
 adb reboot bootloader           ## 进入bootloader模式
 fastboot boot boot.img          ## 从新内核启动，但不烧录，重启会失效
 fastboot flash boot boot.img    ## 烧录新内核
 ```
 
-## 四，错误
-经过上面的步骤，烧录的内核无法正常启动，无限重启，短暂的logcat中显示内核版本不对。
+## 四，验证
 ### 4.1 查看内核版本
 手机内：
 ```
@@ -100,25 +103,15 @@ android-msm-crosshatch-4.9-r-beta-3
  grep -a 'Linux version' Image.lz4
  Linux version 4.9.232 ...
 ```
-### ~~4.2切换对应的内核版本~~
-https://android.googlesource.com/kernel/msm/+/5bded8e40b62
 
-根据版本号里的git id提示，找到该版本对应的分支[https://android.googlesource.com/kernel/msm/+/refs/heads/android-msm-crosshatch-4.9-r-beta-3], 切换过去编译，烧录之后系统可以起来了，但是有很多外设报错：蓝牙，音频等，界面黑屏。点开应用之后系统就重启了。后面也尝试了其它的分支版本，依旧是不能正常运行。  
+## 五，总结
+本文成文于21年初，当时并没有研究linux内核的计划，花了一个下午时间简单尝试下，失败了就没继续，没想到本文对一些朋友造成困扰，Kyr1os同学还特地发邮件来提供正确的方法。现在重新操作了一遍，确认了方法可行。kernel分支直接使用官方页面上最新的就行，我重新编译使用的是android-msm-crosshatch-4.9-android12分支，可以正常运行。   
+由于ko文件是打包进vendor.img的，每个分支官方都会提供。尝试了下，自己编译的vendor.img无法开机，解包后再打包也未成功，就不再折腾。如果需要提前预置好ko文件，可以打包进system.img或者在内核里将这些ko模块预置。
 
-### 4.3 **Kyr1os**同学邮件提供的修复方法  -- 20210720 add
-> hqw700, 您好   
-我最近在 Pixel 3 上编译 Android11, 参考了您的文章：https://hqw700.github.io/2021/01/02/aosp-kernel-build/。遇到了和您同样的问题。  
-在查阅资料后我找到了这篇帖子：https://groups.google.com/g/android-building/c/ou630PviyDc  
-使用以下命令后解决了问题。  
-adb root  
-adb remount -R  
-adb push ../kernel/out/android-msm-pixel-4.9/dist/*.ko /vendor/lib/modules  
-供参考  
-Kyr1os
 
-## 五，Android 7.1上编译kernel
-在pixel 3 Android 11 折腾无果后，想起之前有在pixel 1 Android7.1上有编译过kernel, 电脑里也有环境，简单再尝试一下。
-### 5.1 编译和下载
+## 附: Android 7.1上编译kernel
+之前在pixel 3 Android 11 折腾无果后，想起之前有在pixel 1 Android7.1上有编译过kernel, 电脑里也有环境，简单再尝试一下。
+### 编译和下载
 ``` bash
 mkdir kernel
 git clone --depth 1 https://aosp.tuna.tsinghua.edu.cn/kernel/msm.git -b android-msm-marlin-3.18-nougat-mr2
@@ -135,12 +128,12 @@ lunch aosp_sailfish-userdebug
 export TARGET_PREBUILT_KERNEL=/home/huangqw/code/aosp/kernel/msm/arch/arm64/boot/Image.gz-dtb
 make bootimage
 ```
-### 5.2 烧录
+### 烧录
 ``` bash
 adb reboot bootloader 
 fastboot flash boot boot.img 
 ```
-### 5.3 重启后查看内核信息
+### 重启后查看内核信息
 烧录前  
 ```
 $ adb shell cat /proc/version
@@ -151,7 +144,12 @@ Linux version 3.18.31-g086ab5b (android-build@vpbs30.mtv.corp.google.com) (gcc v
 $ adb shell cat /proc/version
 Linux version 3.18.31-g6309b4bd (huangqw@DESKTOP-14RLEFF) (gcc version 4.9 20150123 (prerelease) (GCC) ) #1 SMP PREEMPT Fri Jan 1 17:20:52 CST 2021
 ```
-## 六，问题总结
 
-pixel 1上采用的是旧的编译内核方式，直接下载对应的git节点编译即可。pixel 3没有了kernel defconfig文件，无法采用这个方式，但同样是切换到目前内核所对应的git节点，依旧也没有成功，估计是在新编译方式操作上，漏了一些(补上4.3操作即可 -- 20210720 add)。   
-目前我Android 11版本是比较早期的android-11.0.0_r1，而kernel只有个android 11分支，应该是对应的是最新的AOSP分支。所以我要正常运行应该要将我的AOSP分支切到最新，由于切换和重新编译比较耗时，就先不折腾了，后续研究要涉及最新kernel后再弄吧。其实要研究些基本原理，研究旧版的系统会减少一些阻碍，越新的系统机制越复杂。
+
+> 操作系统：Windows 10 专业版 19042.685  
+> 编译机：WSL2 Ubuntu-18.04  
+> 手机：Google Pixel 3 Android 11  
+> 源码版本：kernel android-msm-crosshatch-4.9-android11
+
+> 参考1: [构建内核  |  Android 开源项目  |  Android Open Source Project](https://source.android.com/setup/build/building-kernels)  
+> 参考2: [Touchscreen not working after building and flashing clean msm kernel for the Google Pixel blueline](https://groups.google.com/g/android-building/c/ou630PviyDc)
