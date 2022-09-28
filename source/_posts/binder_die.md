@@ -1,5 +1,5 @@
 ---
-title: 一起来学binder — cpp/java端的死亡讣告与dump的简单示例
+title: 【一起来学binder】cpp/java端的死亡讣告与dump的简单示例
 date: 2021-01-21 23:20:48
 tag: [binder, Android系统, 教程, github]
 category: [源码分析]

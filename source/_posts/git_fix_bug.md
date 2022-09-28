@@ -1,5 +1,5 @@
 ---
-title: 使用fixup与autosquash命令改变错误提交
+title: 【奇技淫巧】使用fixup与autosquash命令改变错误提交
 date: 2021-01-23 11:28:54
 tag: [教程, github, 奇技淫巧]
 category: [工具使用]

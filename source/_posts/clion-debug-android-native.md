@@ -8,7 +8,7 @@ banner_img: /img/bg/clion_banner.png
 ---
 
 > 运行环境: windows + WSL2 
-> 调试机器：pixel 3 + aosp10
+> 调试机器: pixel 3 + aosp10
 > 使用工具: clion, adb
 
 CLion是IntelliJ开发的C/C++跨平台IDE，和Android Studio有相同的UI和交互，弥补了Android Studio无法用来调试和索引native代码的不足。Android源码下有将源码生成为CLion project的文档(`$AOSP/build/soong/docs/clion.md`), 但使用clion调试不需要用到该部分功能，所以不做介绍。  
@@ -27,7 +27,7 @@ Sysroot: /home/huangqw/code/out/target/product/blueline/symbols (符号表的路
 ![](/img/blog/clion_remote_debug_config.png)
 ![](/img/blog/clion_remote_debug_config2.png)
 
-## 2, 创建.gdbinit文件
+## 2，创建.gdbinit文件
 在windows的`C:\Users\%USERNAME%`目录下创建.gdbinit文件，设置以下内容。其中关键是 `set dir 源码目录`
 ```
 set dir /home/huangqw/code

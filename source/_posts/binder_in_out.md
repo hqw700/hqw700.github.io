@@ -1,5 +1,5 @@
 ---
-title: 一起来学binder — in/out/inout以及oneway的简单示例
+title: 【一起来学binder】in/out/inout以及oneway的简单示例
 date: 2021-02-19 23:13:57
 tag: [binder, Android系统, 教程, github]
 category: [源码分析]
