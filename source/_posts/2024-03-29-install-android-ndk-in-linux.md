@@ -1,7 +1,7 @@
 ---
 title: Install android ndk in linux and compile the sample code
 date: 2024/3/29 22:55
-tag: [Android系统,教程]
+tag: [Android系统,教程,ndk]
 category: [工具使用]
 excerpt: 在Linux安装ndk并编译示例代码。
 ---
@@ -129,6 +129,8 @@ build-linux/hello_cmake: ELF 64-bit LSB shared object, x86-64, version 1 (SYSV),
 $ file build-android/hello_cmake
 build-android/hello_cmake: ELF 64-bit LSB shared object, ARM aarch64, version 1 (SYSV), dynamically linked, interpreter /system/bin/linker64, BuildID[sha1]=322bed0b22b9c27619b3b3a128322993667a5e7a, with debug_info, not stripped
 ```
+
+### readelf -h
 ``` shell
 $ readelf -h build-linux/hello_cmake
 ELF Header:
@@ -153,7 +155,6 @@ ELF Header:
   Section header string table index: 28
 ```
 
-### readelf -h
 ``` shell
 $ readelf -h build-android/hello_cmake
 ELF Header:
