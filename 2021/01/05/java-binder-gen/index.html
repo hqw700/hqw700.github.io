@@ -1,0 +1,700 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/androidR.png">
+  <link rel="icon" href="/img/androidR.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="通过系统自带的aidl工具生成binder类，并编写客户端和服务端代码测试">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【一起来学binder】java端代码生成">
+<meta property="og:url" content="https://hqw700.github.io/2021/01/05/java-binder-gen/index.html">
+<meta property="og:site_name" content="不秃的Android世界">
+<meta property="og:description" content="通过系统自带的aidl工具生成binder类，并编写客户端和服务端代码测试">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-01-05T14:54:10.000Z">
+<meta property="article:modified_time" content="2025-09-04T15:00:58.462Z">
+<meta property="article:tag" content="教程">
+<meta property="article:tag" content="Android系统">
+<meta property="article:tag" content="binder">
+<meta property="article:tag" content="github">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>【一起来学binder】java端代码生成 - 不秃的Android世界</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"hqw700.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 50vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>不秃</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/bg/banner.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="【一起来学binder】java端代码生成"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2021-01-05 22:54" pubdate>
+          2021年1月5日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">【一起来学binder】java端代码生成</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <blockquote>
+<p>操作系统：Windows 10 专业版 19042.685<br>编译机：WSL2 Ubuntu-18.04<br>手机：Google Pixel 1<br>源码版本：AOSP android-7.1.1_r35</p>
+</blockquote>
+<h2 id="1，创建aidl文件"><a href="#1，创建aidl文件" class="headerlink" title="1，创建aidl文件"></a>1，创建aidl文件</h2><p>ITest.aidl</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">package</span> demo;<br><br><span class="hljs-keyword">interface</span> <span class="hljs-title class_">ITest</span><br>&#123;<br>    <span class="hljs-keyword">void</span> <span class="hljs-title function_">ping</span><span class="hljs-params">()</span>;<br>    <span class="hljs-type">int</span> <span class="hljs-title function_">sum</span><span class="hljs-params">(<span class="hljs-type">int</span> x, <span class="hljs-type">int</span> y)</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<h2 id="2，用aidl工具生成java端接口实现"><a href="#2，用aidl工具生成java端接口实现" class="headerlink" title="2，用aidl工具生成java端接口实现"></a>2，用aidl工具生成java端接口实现</h2><p>在aosp源码下载操作，然后第一步就生成错误了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs log">~/code/aosp$ out/host/linux-x86/bin/aidl -oframeworks/native/cmds/bindergen/java/src/ frameworks/native/cmds/bindergen/ITest.aidl<br>frameworks/native/cmds/bindergen/ITest.aidl:3 interface ITest should be declared in a file called demo/ITest.aidl.<br>aidl E  1991  1991 aidl.cpp:545] Invalid package declaration &#x27;demo&#x27;<br></code></pre></td></tr></table></figure>
+<p>原来是要在包含包名”demo”的文件夹下生成，只能将原定的文件夹名bindergen改为binderdemo。aidl工具应该是要在完整包路径下执行的，但为了目录结构好看，我放在了根目录。继续执行：</p>
+<figure class="highlight console"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs console">out/host/linux-x86/bin/aidl -oframeworks/native/cmds/binderdemo/java/src/ frameworks/native/cmds/binderdemo/ITest.aidl<br></code></pre></td></tr></table></figure>
+<p>无输出，不过可以看到src目录下多了demo&#x2F;ITest.java文件</p>
+<h2 id="3，编写binder服务端代码"><a href="#3，编写binder服务端代码" class="headerlink" title="3，编写binder服务端代码"></a>3，编写binder服务端代码</h2><p>java&#x2F;src&#x2F;demo&#x2F;TestServer.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">package</span> demo;<br><br><span class="hljs-keyword">import</span> android.os.RemoteException;<br><span class="hljs-keyword">import</span> android.util.Log;<br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">TestServer</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">ITest</span>.Stub &#123;<br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">String</span> <span class="hljs-variable">TAG</span> <span class="hljs-operator">=</span> <span class="hljs-string">&quot;JAVA_BINDER.Server&quot;</span>;<br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">ping</span><span class="hljs-params">()</span> <span class="hljs-keyword">throws</span> RemoteException &#123;<br>        Log.d(TAG, <span class="hljs-string">&quot;ping receive ok&quot;</span>);<br>    &#125;<br><br>    <span class="hljs-meta">@Override</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-type">int</span> <span class="hljs-title function_">sum</span><span class="hljs-params">(<span class="hljs-type">int</span> x, <span class="hljs-type">int</span> y)</span> <span class="hljs-keyword">throws</span> RemoteException &#123;<br>        Log.d(TAG, <span class="hljs-string">&quot;sum &quot;</span> + x + <span class="hljs-string">&quot; + &quot;</span> + y);<br>        <span class="hljs-keyword">return</span> x + y;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<h2 id="4，编写测试类Main-java"><a href="#4，编写测试类Main-java" class="headerlink" title="4，编写测试类Main.java"></a>4，编写测试类Main.java</h2><p>将binder客户端和服务端合在一起，带参数执行为客户端，不带参数执行为服务端。<br>java&#x2F;src&#x2F;demo&#x2F;Main.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">package</span> demo;<br><br><span class="hljs-keyword">import</span> android.os.RemoteException;<br><span class="hljs-keyword">import</span> android.os.ServiceManager;<br><span class="hljs-keyword">import</span> android.util.Log;<br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Main</span> &#123;<br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">String</span> <span class="hljs-variable">TAG_S</span> <span class="hljs-operator">=</span> <span class="hljs-string">&quot;JAVA_BINDER.Server&quot;</span>;<br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">String</span> <span class="hljs-variable">TAG_C</span> <span class="hljs-operator">=</span> <span class="hljs-string">&quot;JAVA_BINDER.Client&quot;</span>;<br>    <span class="hljs-keyword">private</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">String</span> <span class="hljs-variable">BINDER_NAME</span> <span class="hljs-operator">=</span> <span class="hljs-string">&quot;test_server&quot;</span>;<br><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span> &#123;<br>        <span class="hljs-type">int</span> <span class="hljs-variable">len</span> <span class="hljs-operator">=</span> args.length;<br>        <span class="hljs-keyword">if</span> (len == <span class="hljs-number">0</span>) &#123;<br>            Log.d(TAG_S, <span class="hljs-string">&quot;This is TestServer&quot;</span>);<br>            <span class="hljs-type">TestServer</span> <span class="hljs-variable">testServer</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">TestServer</span>();<br>            ServiceManager.addService(BINDER_NAME, testServer);<br>            <span class="hljs-keyword">for</span> (;;);<br>        &#125; <span class="hljs-keyword">else</span> &#123;<br>            Log.d(TAG_C, <span class="hljs-string">&quot;This is TestClient&quot;</span>);<br>            <span class="hljs-type">ITest</span> <span class="hljs-variable">testClient</span> <span class="hljs-operator">=</span> ITest.Stub.asInterface(ServiceManager.getService(BINDER_NAME));<br>            <span class="hljs-keyword">if</span> (testClient == <span class="hljs-literal">null</span>) &#123;<br>                System.err.println(<span class="hljs-string">&quot;TestServer is null&quot;</span>);<br>                System.exit(-<span class="hljs-number">1</span>);<br>            &#125;<br>            <span class="hljs-keyword">try</span> &#123;<br>                Log.d(TAG_C, <span class="hljs-string">&quot;ping&quot;</span>);<br>                testClient.ping();<br><br>                <span class="hljs-type">int</span> <span class="hljs-variable">v1</span> <span class="hljs-operator">=</span> Integer.parseInt(args[<span class="hljs-number">0</span>]);<br>                <span class="hljs-type">int</span> <span class="hljs-variable">v2</span> <span class="hljs-operator">=</span> Integer.parseInt(args[<span class="hljs-number">1</span>]);<br>                Log.d(TAG_C, String.format(<span class="hljs-string">&quot;sum (%d,%d)&quot;</span>, v1, v2));<br>                <span class="hljs-type">int</span> <span class="hljs-variable">ret</span> <span class="hljs-operator">=</span> testClient.sum(v1, v2);<br>                Log.d(TAG_C, String.format(<span class="hljs-string">&quot;sum (%d,%d) return %d&quot;</span>, v1, v2, ret));<br>                System.out.println(ret);<br>            &#125; <span class="hljs-keyword">catch</span> (RemoteException e) &#123;<br>                e.printStackTrace();<br>            &#125;<br>            System.exit(<span class="hljs-number">0</span>);<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="5，编写可以执行文件java-binder-test和Android-mk"><a href="#5，编写可以执行文件java-binder-test和Android-mk" class="headerlink" title="5，编写可以执行文件java_binder_test和Android.mk"></a>5，编写可以执行文件java_binder_test和Android.mk</h2><p>java&#x2F;java_binder_test</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">shell.</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">-agentlib:jdwp=transport=dt_socket,<span class="hljs-built_in">suspend</span>=y,server=y,address=5005</span><br>base=/system<br>export CLASSPATH=$base/framework/java_binder_test.jar<br>exec app_process $base/bin demo.Main &quot;$@&quot;<br></code></pre></td></tr></table></figure>
+
+<p>java&#x2F;Android.mk</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs Makefile">LOCAL_PATH:= <span class="hljs-variable">$(<span class="hljs-built_in">call</span> my-<span class="hljs-built_in">dir</span>)</span><br><br><span class="hljs-keyword">include</span> <span class="hljs-variable">$(CLEAR_VARS)</span><br>LOCAL_SRC_FILES := <span class="hljs-variable">$(<span class="hljs-built_in">call</span> all-subdir-java-files)</span><br>LOCAL_MODULE := java_binder_test<br><span class="hljs-keyword">include</span> <span class="hljs-variable">$(BUILD_JAVA_LIBRARY)</span><br><br><span class="hljs-keyword">include</span> <span class="hljs-variable">$(CLEAR_VARS)</span><br>LOCAL_MODULE := java_binder_test<br>LOCAL_SRC_FILES := java_binder_test<br>LOCAL_MODULE_CLASS := EXECUTABLES<br>LOCAL_MODULE_TAGS := optional<br><span class="hljs-keyword">include</span> <span class="hljs-variable">$(BUILD_PREBUILT)</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="6，编译"><a href="#6，编译" class="headerlink" title="6，编译"></a>6，编译</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs log">$ cd binderdemo/java<br>$ mm | tee<br>[ 12% 1/8] target Prebuilt: java_binder_test (out/target/product/sailfish/obj/EXECUTABLES/java_binder_test_intermediates/java_binder_test)<br>[ 25% 2/8] Install: out/target/product/sailfish/system/bin/java_binder_test<br>[ 37% 3/8] Ensure Jack server is installed and started<br>Jack server already installed in &quot;/home/huangqw/.jack-server&quot;<br>Launching Jack server java -XX:MaxJavaStackTraceDepth=-1 -Djava.io.tmpdir=/tmp -Dfile.encoding=UTF-8 -XX:+TieredCompilation -cp /home/huangqw/.jack-server/launcher.jar com.android.jack.launcher.ServerLauncher<br>[ 50% 4/8] Building with Jack: out/target/common/obj/JAVA_LIBRARIES/java_binder_test_intermediates/with-local/classes.dex<br>[ 62% 5/8] Copying: out/target/common/obj/JAVA_LIBRARIES/java_binder_test_intermediates/classes.dex<br>[ 75% 6/8] target Jar: java_binder_test (out/target/common/obj/JAVA_LIBRARIES/java_binder_test_intermediates/javalib.jar)<br>[ 87% 7/8] build out/target/product/sailfish/obj/JAVA_LIBRARIES/java_binder_test_intermediates/javalib.jar<br>[100% 8/8] Install: out/target/product/sailfish/system/framework/java_binder_test.jar<br></code></pre></td></tr></table></figure>
+<p>生成 &#x2F;system&#x2F;bin&#x2F;java_binder_test 和 &#x2F;system&#x2F;framework&#x2F;java_binder_test.jar</p>
+<h2 id="7，push进系统"><a href="#7，push进系统" class="headerlink" title="7，push进系统"></a>7，push进系统</h2><figure class="highlight console"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs console"><span class="hljs-meta prompt_">$ </span><span class="language-bash">adb root &amp;&amp; adb remount</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">adb push /system/framework/java_binder_test.jar /system/framework/java_binder_test.jar</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">adb push /system/bin/java_binder_test /system/bin/java_binder_test</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">adb reboot</span><br></code></pre></td></tr></table></figure>
+<h2 id="8，测试"><a href="#8，测试" class="headerlink" title="8，测试"></a>8，测试</h2><p>启动服务端</p>
+<figure class="highlight console"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs console"><span class="hljs-meta prompt_">$ </span><span class="language-bash">adb root</span><br><span class="hljs-meta prompt_">$ </span><span class="language-bash">adb shell java_binder_test</span><br><br></code></pre></td></tr></table></figure>
+
+<p>查看Binder服务：</p>
+<figure class="highlight console"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs console"><span class="hljs-meta prompt_">$ </span><span class="language-bash">adb shell service list | grep test_</span><br>0       test_server: [demo.ITest]<br></code></pre></td></tr></table></figure>
+<p>客户端测试：</p>
+<figure class="highlight console"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs console"><span class="hljs-meta prompt_">$ </span><span class="language-bash">adb shell java_binder_test 1 2</span><br>3<br></code></pre></td></tr></table></figure>
+<p>log</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs log">1973-02-02 03:03:23.423 2639-2639/? D/JAVA_BINDER.Server: This is TestServer<br>1973-02-02 03:04:37.269 2652-2652/? D/JAVA_BINDER.Client: This is TestClient<br>1973-02-02 03:04:37.270 2652-2652/? D/JAVA_BINDER.Client: ping<br>1973-02-02 03:04:37.270 2639-2647/? D/JAVA_BINDER.Server: ping receive ok<br>1973-02-02 03:04:37.271 2652-2652/? D/JAVA_BINDER.Client: sum (1,2)<br>1973-02-02 03:04:37.271 2639-2648/? D/JAVA_BINDER.Server: sum 1 + 2<br>1973-02-02 03:04:37.271 2652-2652/? D/JAVA_BINDER.Client: sum (1,2) return 3<br></code></pre></td></tr></table></figure>
+<h2 id="9，源码"><a href="#9，源码" class="headerlink" title="9，源码"></a>9，源码</h2><p>这个binder系列会持续更新，逐渐完善更多的用法，本章节的代码在tag v0.1下：<br><a target="_blank" rel="noopener" href="https://github.com/hqw700/binderdemo/releases/tag/v0.1">https://github.com/hqw700/binderdemo/releases/tag/v0.1</a></p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs mipsasm"><span class="hljs-keyword">binderdemo</span><br><span class="hljs-keyword"></span>├── ITest.aidl<br>└── <span class="hljs-keyword">java</span><br><span class="hljs-keyword"></span>    ├── <span class="hljs-keyword">Android.mk</span><br><span class="hljs-keyword"></span>    ├── <span class="hljs-keyword">java_binder_test</span><br><span class="hljs-keyword"></span>    └── src<br>        └── demo<br>            ├── ITest.<span class="hljs-keyword">java</span><br><span class="hljs-keyword"></span>            ├── Main.<span class="hljs-keyword">java</span><br><span class="hljs-keyword"></span>            └── TestServer.<span class="hljs-keyword">java</span><br></code></pre></td></tr></table></figure>
+
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" class="category-chain-item">源码分析</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E6%95%99%E7%A8%8B/" class="print-no-link">#教程</a>
+      
+        <a href="/tags/Android%E7%B3%BB%E7%BB%9F/" class="print-no-link">#Android系统</a>
+      
+        <a href="/tags/binder/" class="print-no-link">#binder</a>
+      
+        <a href="/tags/github/" class="print-no-link">#github</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>【一起来学binder】java端代码生成</div>
+      <div>https://hqw700.github.io/2021/01/05/java-binder-gen/</div>
+    </div>
+    <div class="license-meta">
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2021年1月5日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2021/01/09/cpp-binder-gen/" title="【一起来学binder】cpp端代码生成">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">【一起来学binder】cpp端代码生成</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/01/02/aosp-kernel-build/" title="Pixel 3上Linux内核源码的下载，编译与烧录">
+                        <span class="hidden-mobile">Pixel 3上Linux内核源码的下载，编译与烧录</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+
+  
+
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

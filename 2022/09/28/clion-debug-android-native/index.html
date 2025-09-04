@@ -1,0 +1,686 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/androidR.png">
+  <link rel="icon" href="/img/androidR.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="使用IDE调试surfaceflinger">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【工具使用】使用clion调试Android Native程序">
+<meta property="og:url" content="https://hqw700.github.io/2022/09/28/clion-debug-android-native/index.html">
+<meta property="og:site_name" content="不秃的Android世界">
+<meta property="og:description" content="使用IDE调试surfaceflinger">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://hqw700.github.io/img/blog/clion_remote_debug_config.png">
+<meta property="og:image" content="https://hqw700.github.io/img/blog/clion_remote_debug_config2.png">
+<meta property="og:image" content="https://hqw700.github.io/img/blog/clion_debug_ok.png">
+<meta property="og:image" content="https://hqw700.github.io/img/blog/clion_debug_ok2.png">
+<meta property="og:image" content="https://hqw700.github.io/img/blog/clion_debug_ok3.png">
+<meta property="article:published_time" content="2022-09-28T10:00:00.000Z">
+<meta property="article:modified_time" content="2025-09-04T15:00:58.461Z">
+<meta property="article:tag" content="教程">
+<meta property="article:tag" content="Android系统">
+<meta property="article:tag" content="工具使用">
+<meta property="article:tag" content="调试">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://hqw700.github.io/img/blog/clion_remote_debug_config.png">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>【工具使用】使用clion调试Android Native程序 - 不秃的Android世界</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"hqw700.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 50vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>不秃</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/bg/clion_banner.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="【工具使用】使用clion调试Android Native程序"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-09-28 18:00" pubdate>
+          2022年9月28日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">【工具使用】使用clion调试Android Native程序</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <blockquote>
+<p>运行环境: windows + WSL2<br>调试机器: pixel 3 + aosp10<br>使用工具: clion, adb</p>
+</blockquote>
+<p>CLion是IntelliJ开发的C&#x2F;C++跨平台IDE，和Android Studio有相同的UI和交互，弥补了Android Studio无法用来调试和索引native代码的不足。Android源码下有将源码生成为CLion project的文档(<code>$AOSP/build/soong/docs/clion.md</code>), 但使用clion调试不需要用到该部分功能，所以不做介绍。<br>我的环境是用WSL2下载和编译android源码，windows下可以在文件管理器中通过<code>\\wsl$</code>路径直接查看代码(类似于samba)，adb和CLion都运行在windows上。<br>下面以surfaceflinger程序为例的详细步骤：</p>
+<h2 id="1，使用Clion打开源码"><a href="#1，使用Clion打开源码" class="headerlink" title="1，使用Clion打开源码"></a>1，使用Clion打开源码</h2><p>进入源码目录，右键Open Folder as CLion Project打开, 如<code>$AOSP/frameworks/native/services/surfaceflinger</code></p>
+<p>打开后点击 Run –&gt; Edit configurations, 然后选择Remote Debug, 配置设置为:</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs awk">Debugger: Bundled GDB<br><span class="hljs-string">&#x27;target remote&#x27;</span> arg: :<span class="hljs-number">12345</span> (如果是远程环境需要加上ip, 如ip:<span class="hljs-number">12345</span>)<br>Sysroot: <span class="hljs-regexp">/home/</span>huangqw<span class="hljs-regexp">/code/</span>out<span class="hljs-regexp">/target/</span>product<span class="hljs-regexp">/blueline/</span>symbols (符号表的路径，路径为linux下的绝对路径，也可以是windows下路径)<br></code></pre></td></tr></table></figure>
+<p><img src="/img/blog/clion_remote_debug_config.png" srcset="/img/loading.gif" lazyload><br><img src="/img/blog/clion_remote_debug_config2.png" srcset="/img/loading.gif" lazyload></p>
+<h2 id="2，创建-gdbinit文件"><a href="#2，创建-gdbinit文件" class="headerlink" title="2，创建.gdbinit文件"></a>2，创建.gdbinit文件</h2><p>在windows的<code>C:\Users\%USERNAME%</code>目录下创建.gdbinit文件，设置以下内容。其中关键是 <code>set dir 源码目录</code></p>
+<figure class="highlight gams"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs gams"><span class="hljs-keyword">set</span> dir /home/<span class="hljs-comment">huangqw</span>/code<br>set solib-absolute-prefix /<span class="hljs-comment">home</span>/huangqw/<span class="hljs-comment">code</span>/out/<span class="hljs-comment">target</span>/product/<span class="hljs-comment">blueline</span>/symbols<br>set solib-search-path /<span class="hljs-comment">home</span>/huangqw/<span class="hljs-comment">code</span>/out/<span class="hljs-comment">target</span>/product/<span class="hljs-comment">blueline</span>/symbols/<span class="hljs-comment">system</span>/lib64:/<span class="hljs-comment">home</span>/huangqw/<span class="hljs-comment">code</span>/out/<span class="hljs-comment">target</span>/product/<span class="hljs-comment">blueline</span>/symbols/<span class="hljs-comment">system</span>/lib64/<span class="hljs-comment">hw:</span>/home/<span class="hljs-comment">huangqw</span>/code/<span class="hljs-comment">out</span>/target/<span class="hljs-comment">product</span>/blueline/<span class="hljs-comment">symbols</span>/<span class="hljs-keyword">system</span>/<span class="hljs-comment">lib64</span>/ssl/<span class="hljs-comment">engines:</span>/home/<span class="hljs-comment">huangqw</span>/code/<span class="hljs-comment">out</span>/target/<span class="hljs-comment">product</span>/blueline/<span class="hljs-comment">symbols</span>/<span class="hljs-keyword">system</span>/<span class="hljs-comment">lib64</span>/drm:/<span class="hljs-comment">home</span>/huangqw/<span class="hljs-comment">code</span>/out/<span class="hljs-comment">target</span>/product/<span class="hljs-comment">blueline</span>/symbols/<span class="hljs-comment">system</span>/lib64/<span class="hljs-comment">egl:</span>/home/<span class="hljs-comment">huangqw</span>/code/<span class="hljs-comment">out</span>/target/<span class="hljs-comment">product</span>/blueline/<span class="hljs-comment">symbols</span>/<span class="hljs-keyword">system</span>/<span class="hljs-comment">lib64</span>/soundfx:/<span class="hljs-comment">home</span>/huangqw/<span class="hljs-comment">code</span>/out/<span class="hljs-comment">target</span>/product/<span class="hljs-comment">blueline</span>/symbols/<span class="hljs-comment">vendor</span>/lib64:/<span class="hljs-comment">home</span>/huangqw/<span class="hljs-comment">code</span>/out/<span class="hljs-comment">target</span>/product/<span class="hljs-comment">blueline</span>/symbols/<span class="hljs-comment">vendor</span>/lib64/<span class="hljs-comment">hw:</span>/home/<span class="hljs-comment">huangqw</span>/code/<span class="hljs-comment">out</span>/target/<span class="hljs-comment">product</span>/blueline/<span class="hljs-comment">symbols</span>/vendor/<span class="hljs-comment">lib64</span>/egl<br></code></pre></td></tr></table></figure>
+
+<h2 id="3，Windows终端下操作"><a href="#3，Windows终端下操作" class="headerlink" title="3，Windows终端下操作"></a>3，Windows终端下操作</h2><figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs livecodeserver">使用adb连接手机：<br>adb root<br>adb forward tcp:<span class="hljs-number">12345</span> tcp:<span class="hljs-number">12345</span><br>adb <span class="hljs-built_in">shell</span><br>blueline:/ <span class="hljs-comment"># gdbserver64 :12345 --attach `pidof surfaceflinger`</span><br>    Attached; pid = <span class="hljs-number">654</span><br>    gdbserver: Unable <span class="hljs-built_in">to</span> determine <span class="hljs-keyword">the</span> <span class="hljs-built_in">number</span> <span class="hljs-keyword">of</span> hardware watchpoints available.<br>    gdbserver: Unable <span class="hljs-built_in">to</span> determine <span class="hljs-keyword">the</span> <span class="hljs-built_in">number</span> <span class="hljs-keyword">of</span> hardware breakpoints available.<br>    Listening <span class="hljs-keyword">on</span> <span class="hljs-title">port</span> <span class="hljs-title">12345</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="4，调试"><a href="#4，调试" class="headerlink" title="4，调试"></a>4，调试</h2><p>回到CLion中，点击Run –&gt; Debug “Unnamed” 开始调试<br>在截屏代码下打个断点，如SurfaceFlinger::renderScreenImplLocked<br><img src="/img/blog/clion_debug_ok.png" srcset="/img/loading.gif" lazyload></p>
+<p>然后手动截图，成功断点如上图，接下来就可以单步运行，正常的话可以打开项目外的系统库文件。如图所示堆栈里的Looper函数。如显示的是汇编代码则不正常, 请检查.gdbinit文件，或者在gdb终端里set dir “xxx” 设置源码目录。<br><img src="/img/blog/clion_debug_ok2.png" srcset="/img/loading.gif" lazyload></p>
+<h2 id="5，变量显示optimized-out问题"><a href="#5，变量显示optimized-out问题" class="headerlink" title="5，变量显示optimized out问题"></a>5，变量显示optimized out问题</h2><p>调试时变量显示optimized out，无法正常查看。这是由于C++编译优化的原因，在Android.bp的cflags里加个”-O0”，重新编译surfaceflinger， push生成即可。<br><img src="/img/blog/clion_debug_ok3.png" srcset="/img/loading.gif" lazyload></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/" class="category-chain-item">工具使用</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E6%95%99%E7%A8%8B/" class="print-no-link">#教程</a>
+      
+        <a href="/tags/Android%E7%B3%BB%E7%BB%9F/" class="print-no-link">#Android系统</a>
+      
+        <a href="/tags/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/" class="print-no-link">#工具使用</a>
+      
+        <a href="/tags/%E8%B0%83%E8%AF%95/" class="print-no-link">#调试</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>【工具使用】使用clion调试Android Native程序</div>
+      <div>https://hqw700.github.io/2022/09/28/clion-debug-android-native/</div>
+    </div>
+    <div class="license-meta">
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年9月28日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/10/24/binder_simplest_call/" title="【一起来学binder】最简单的binder调用">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">【一起来学binder】最简单的binder调用</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/02/19/binder_in_out/" title="【一起来学binder】in/out/inout以及oneway的简单示例">
+                        <span class="hidden-mobile">【一起来学binder】in/out/inout以及oneway的简单示例</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+
+  
+
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

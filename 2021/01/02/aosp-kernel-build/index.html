@@ -1,0 +1,700 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/androidR.png">
+  <link rel="icon" href="/img/androidR.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="(2021-11-10 重新编辑) 本文主要介绍在Pixel 3 Linux内核源码下载，编译和烧录。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Pixel 3上Linux内核源码的下载，编译与烧录">
+<meta property="og:url" content="https://hqw700.github.io/2021/01/02/aosp-kernel-build/index.html">
+<meta property="og:site_name" content="不秃的Android世界">
+<meta property="og:description" content="(2021-11-10 重新编辑) 本文主要介绍在Pixel 3 Linux内核源码下载，编译和烧录。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-01-02T08:05:16.000Z">
+<meta property="article:modified_time" content="2025-09-04T15:00:58.461Z">
+<meta property="article:tag" content="教程">
+<meta property="article:tag" content="Android系统">
+<meta property="article:tag" content="Linux">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>Pixel 3上Linux内核源码的下载，编译与烧录 - 不秃的Android世界</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"hqw700.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":3},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 50vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>不秃</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/bg/banner.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Pixel 3上Linux内核源码的下载，编译与烧录"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2021-01-02 16:05" pubdate>
+          2021年1月2日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">Pixel 3上Linux内核源码的下载，编译与烧录</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>官方教程地址<a target="_blank" rel="noopener" href="https://source.android.com/setup/build/building-kernels">https://source.android.com/setup/build/building-kernels</a>, 已经写的很详细了, 由于翻译不及时，不同语言页面下显示的分支不一致，都可以使用。</p>
+<h2 id="一，源码下载"><a href="#一，源码下载" class="headerlink" title="一，源码下载"></a>一，源码下载</h2><h3 id="1-1-AOSP源码下载"><a href="#1-1-AOSP源码下载" class="headerlink" title="1.1 AOSP源码下载"></a>1.1 AOSP源码下载</h3><p>依旧是将Google的地址<code>android.googlesource.com</code>替换清华的地址<code>aosp.tuna.tsinghua.edu.cn</code><br>加 <code>--depth 1</code> 控制git深度可以极大节省硬盘空间。最终.repo目录21G左右<br>注：kernel分支不需要和aosp分支对应。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">export</span> REPO_URL=<span class="hljs-string">&#x27;https://mirrors.tuna.tsinghua.edu.cn/git/git-repo&#x27;</span><br>repo init --depth 1 -u https://aosp.tuna.tsinghua.edu.cn/kernel/manifest -b android-msm-crosshatch-4.9-android11<br>repo <span class="hljs-built_in">sync</span> -j20<br></code></pre></td></tr></table></figure>
+
+<h2 id="二，编译"><a href="#二，编译" class="headerlink" title="二，编译"></a>二，编译</h2><h3 id="2-1-编译kernel"><a href="#2-1-编译kernel" class="headerlink" title="2.1 编译kernel"></a>2.1 编译kernel</h3><p>执行build&#x2F;build.sh即可</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs bash">~/code/kernel$ ./build/build.sh<br>========================================================<br> Copying modules files<br>  lib/modules/4.9.210-gdee0d123_audio-gee051ba/extra/wlan.ko<br>  lib/modules/4.9.210-gdee0d123_audio-gee051ba/kernel/drivers/input/touchscreen/stm/ftm5.ko<br>  lib/modules/4.9.210-gdee0d123_audio-gee051ba/kernel/drivers/input/touchscreen/sec_ts/sec_touch.ko<br>  lib/modules/4.9.210-gdee0d123_audio-gee051ba/kernel/drivers/input/touchscreen/heatmap.ko<br>  lib/modules/4.9.210-gdee0d123_audio-gee051ba/kernel/drivers/media/v4l2-core/videobuf2-vmalloc.ko<br>  lib/modules/4.9.210-gdee0d123_audio-gee051ba/kernel/drivers/media/v4l2-core/videobuf2-memops.ko<br>  lib/modules/4.9.210-gdee0d123_audio-gee051ba/kernel/techpack/audio/soc/pinctrl-wcd.ko<br>  lib/modules/4.9.210-gdee0d123_audio-gee051ba/kernel/techpack/audio/ipc/wcd-dsp-glink.ko<br>  lib/modules/4.9.210-gdee0d123_audio-gee051ba/kernel/techpack/audio/asoc/snd-soc-sdm845-max98927.ko<br>  lib/modules/4.9.210-gdee0d123_audio-gee051ba/kernel/techpack/audio/asoc/codecs/snd-soc-wcd9xxx.ko<br>  lib/modules/4.9.210-gdee0d123_audio-gee051ba/kernel/techpack/audio/asoc/codecs/snd-soc-cs35l36.ko<br>  lib/modules/4.9.210-gdee0d123_audio-gee051ba/kernel/techpack/audio/asoc/codecs/wcd-core.ko<br>  lib/modules/4.9.210-gdee0d123_audio-gee051ba/kernel/techpack/audio/asoc/codecs/snd-soc-wcd-spi.ko<br>  lib/modules/4.9.210-gdee0d123_audio-gee051ba/kernel/techpack/audio/asoc/codecs/wcd934x/snd-soc-wcd934x.ko<br>  lib/modules/4.9.210-gdee0d123_audio-gee051ba/kernel/techpack/audio/asoc/snd-soc-sdm845.ko<br>========================================================<br> Files copied to /home/huangqw/code/kernel/out/android-msm-pixel-4.9/dist<br></code></pre></td></tr></table></figure>
+<h3 id="2-2-编译kernel报错"><a href="#2-2-编译kernel报错" class="headerlink" title="2.2 编译kernel报错"></a>2.2 编译kernel报错</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs bash">/home/huangqw/code/kernel/private/msm-google/scripts/extract-cert.c:21:10: fatal error: <span class="hljs-string">&#x27;openssl/bio.h&#x27;</span> file not found<br><span class="hljs-comment">#include &lt;openssl/bio.h&gt;</span><br>         ^~~~~~~~~~~~~~~<br>1 error generated.<br>scripts/Makefile.host:101: recipe <span class="hljs-keyword">for</span> target <span class="hljs-string">&#x27;scripts/extract-cert&#x27;</span> failed<br>make[3]: *** [scripts/extract-cert] Error 1<br>make[3]: *** Waiting <span class="hljs-keyword">for</span> unfinished <span class="hljs-built_in">jobs</span>....<br></code></pre></td></tr></table></figure>
+<p>解决：sudo apt-get install libssl-dev</p>
+<h3 id="2-3-打包boot-img"><a href="#2-3-打包boot-img" class="headerlink" title="2.3 打包boot.img"></a>2.3 打包boot.img</h3><p>切换到android11源码目录，将TARGET_PREBUILT_KERNEL设置为kernel生成的Image.lz4文件的路径，官方文档提到的是Image.lz4-dtb，不用理会，android11生成的是Image.lz4。而且不单单是设置这个文件，整个out文件夹都会关联过去。<br>可以用<code>get_build_var BOARD_VENDOR_KERNEL_MODULES</code>命令查看对应的编译环境变量</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs log">~/code/android11$ source build/envsetup.sh<br>~/code/android11$ lunch aosp_blueline-userdebug<br>~/code/android11$ export TARGET_PREBUILT_KERNEL=/home/huangqw/code/kernel/out/android-msm-pixel-4.9/dist/Image.lz4<br>~/code/android11$ make -j16 bootimage<br>  PRODUCT_SOONG_NAMESPACES=device/google/crosshatch hardware/google/av hardware/google/camera hardware/google/interfaces hardware/google/pixel hardware/qcom/sdm845 vendor/google/camera vendor/qcom/sdm845 vendor/google/interfaces vendor/qcom/blueline/proprietary<br>  ============================================<br>  Environment variable TARGET_PREBUILT_KERNEL was modified ( =&gt; /home/huangqw/code/kernel/out/android-msm-pixel-4.9/dist/Image.lz4), regenerating...<br>  Environment variable TARGET_PREBUILT_KERNEL was modified ( =&gt; /home/huangqw/code/kernel/out/android-msm-pixel-4.9/dist/Image.lz4), regenerating...<br>  [100% 222/222] Target boot image from recovery: out/target/product/blueline/boot.img<br><br>#### build completed successfully (01:02 (mm:ss)) ####<br></code></pre></td></tr></table></figure>
+<p>生成out&#x2F;target&#x2F;product&#x2F;blueline&#x2F;boot.img文件，如要重新编译原来的内核，将<code>export TARGET_PREBUILT_KERNEL=</code>置空重新编译就行</p>
+<h2 id="三，烧录"><a href="#三，烧录" class="headerlink" title="三，烧录"></a>三，烧录</h2><h3 id="3-1-【重要】-先push生成的ko文件到-vendor-lib-modules下"><a href="#3-1-【重要】-先push生成的ko文件到-vendor-lib-modules下" class="headerlink" title="3.1 【重要】 先push生成的ko文件到&#x2F;vendor&#x2F;lib&#x2F;modules下"></a>3.1 <strong>【重要】</strong> 先push生成的ko文件到&#x2F;vendor&#x2F;lib&#x2F;modules下</h3><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs awk">adb root<br>adb remount -R<br>adb push ..<span class="hljs-regexp">/kernel/</span>out<span class="hljs-regexp">/android-msm-pixel-4.9/</span>dist<span class="hljs-regexp">/*.ko /</span>vendor<span class="hljs-regexp">/lib/m</span>odules<br></code></pre></td></tr></table></figure>
+
+<h3 id="3-2-fastboot-更新bootimg"><a href="#3-2-fastboot-更新bootimg" class="headerlink" title="3.2 fastboot 更新bootimg"></a>3.2 fastboot 更新bootimg</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">adb reboot bootloader           <span class="hljs-comment">## 进入bootloader模式</span><br>fastboot boot boot.img          <span class="hljs-comment">## 从新内核启动，但不烧录，重启会失效</span><br>fastboot flash boot boot.img    <span class="hljs-comment">## 烧录新内核</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="3-3-烧录dtbo-img"><a href="#3-3-烧录dtbo-img" class="headerlink" title="3.3 烧录dtbo.img"></a>3.3 烧录dtbo.img</h3><p>如果修改了设备树，还需要烧录dtbo.img，生成在kernel\out\android-msm-pixel-4.9\dist\dtbo.img</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">fastboot flash dtbo dtbo.img<br></code></pre></td></tr></table></figure>
+
+<h2 id="四，验证"><a href="#四，验证" class="headerlink" title="四，验证"></a>四，验证</h2><h3 id="4-1-查看内核版本"><a href="#4-1-查看内核版本" class="headerlink" title="4.1 查看内核版本"></a>4.1 查看内核版本</h3><p>手机内：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">adb</span> shell cat /proc/version<br><span class="hljs-attribute">Linux</span> version <span class="hljs-number">4</span>.<span class="hljs-number">9</span>.<span class="hljs-number">223</span>-g5bded8e40b62-ab6647920 (android-build@abfarm-us-west1-c-<span class="hljs-number">0040</span>) (Android (<span class="hljs-number">6443078</span> based <span class="hljs-literal">on</span> r383902) clang version <span class="hljs-number">11</span>.<span class="hljs-number">0</span>.<span class="hljs-number">1</span> (https://android.googlesource.com/toolchain/llvm-project b397f81060ce6d701042b782172ed13bee898b79)) #<span class="hljs-number">0</span> SMP PREEMPT Thu Jul <span class="hljs-number">2</span> <span class="hljs-number">03</span>:<span class="hljs-number">22</span>:<span class="hljs-number">48</span> UTC <span class="hljs-number">2020</span><br><span class="hljs-attribute">android</span>-msm-crosshatch-<span class="hljs-number">4</span>.<span class="hljs-number">9</span>-r-beta-<span class="hljs-number">3</span><br></code></pre></td></tr></table></figure>
+<p>编译生成的：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">grep</span> -a &#x27;Linux version&#x27; Image.lz4<br><span class="hljs-attribute">Linux</span> version <span class="hljs-number">4</span>.<span class="hljs-number">9</span>.<span class="hljs-number">232</span> ...<br></code></pre></td></tr></table></figure>
+
+<h2 id="五，总结"><a href="#五，总结" class="headerlink" title="五，总结"></a>五，总结</h2><p>本文成文于21年初，当时并没有研究linux内核的计划，花了一个下午时间简单尝试下，失败了就没继续，没想到本文对一些朋友造成困扰，Kyr1os同学还特地发邮件来提供正确的方法。现在重新操作了一遍，确认了方法可行。kernel分支直接使用官方页面上最新的就行，我重新编译使用的是android-msm-crosshatch-4.9-android12分支，可以正常运行。<br>由于ko文件是打包进vendor.img的，每个分支官方都会提供。尝试了下，自己编译的vendor.img无法开机，解包后再打包也未成功，就不再折腾。如果需要提前预置好ko文件，可以打包进system.img或者在内核里将这些ko模块预置。</p>
+<h2 id="附-Android-7-1上编译kernel"><a href="#附-Android-7-1上编译kernel" class="headerlink" title="附: Android 7.1上编译kernel"></a>附: Android 7.1上编译kernel</h2><p>之前在pixel 3 Android 11 折腾无果后，想起之前有在pixel 1 Android7.1上有编译过kernel, 电脑里也有环境，简单再尝试一下。</p>
+<h3 id="编译和下载"><a href="#编译和下载" class="headerlink" title="编译和下载"></a>编译和下载</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">mkdir</span> kernel<br>git <span class="hljs-built_in">clone</span> --depth 1 https://aosp.tuna.tsinghua.edu.cn/kernel/msm.git -b android-msm-marlin-3.18-nougat-mr2<br><span class="hljs-built_in">cd</span> msm<br><span class="hljs-built_in">export</span> PATH=<span class="hljs-variable">$PATH</span>:/home/huangqw/code/aosp/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9/bin<br><span class="hljs-built_in">export</span> ARCH=arm64<br><span class="hljs-built_in">export</span> CROSS_COMPILE=aarch64-linux-android-<br><span class="hljs-built_in">export</span> SUBARCH=arm64<br>make marlin_defconfig<br>make -j16<br>croot<br><span class="hljs-built_in">source</span> build/envsetup.sh<br>lunch aosp_sailfish-userdebug<br><span class="hljs-built_in">export</span> TARGET_PREBUILT_KERNEL=/home/huangqw/code/aosp/kernel/msm/arch/arm64/boot/Image.gz-dtb<br>make bootimage<br></code></pre></td></tr></table></figure>
+<h3 id="烧录"><a href="#烧录" class="headerlink" title="烧录"></a>烧录</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">adb reboot bootloader <br>fastboot flash boot boot.img <br></code></pre></td></tr></table></figure>
+<h3 id="重启后查看内核信息"><a href="#重启后查看内核信息" class="headerlink" title="重启后查看内核信息"></a>重启后查看内核信息</h3><p>烧录前  </p>
+<figure class="highlight tcl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs tcl">$ adb shell cat /<span class="hljs-keyword">proc</span>/version<span class="hljs-title"></span><br><span class="hljs-title">Linux</span> version 3.18.31-g086ab5b (android-build@vpbs30.mtv.corp.google.com) (gcc<span class="hljs-title"> version</span> 4.9.x 20150123 (prerelease) (GCC) ) #1<span class="hljs-title"> SMP</span> PREEMPT<span class="hljs-title"> Thu</span> Feb 16 00:50:36<span class="hljs-title"> UTC</span> 2017  <br></code></pre></td></tr></table></figure>
+<p>烧录后  </p>
+<figure class="highlight tcl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs tcl">$ adb shell cat /<span class="hljs-keyword">proc</span>/version<span class="hljs-title"></span><br><span class="hljs-title">Linux</span> version 3.18.31-g6309b4bd (huangqw@DESKTOP-14RLEFF) (gcc<span class="hljs-title"> version</span> 4.9 20150123 (prerelease) (GCC) ) #1<span class="hljs-title"> SMP</span> PREEMPT<span class="hljs-title"> Fri</span> Jan 1 17:20:52<span class="hljs-title"> CST</span> 2021<br></code></pre></td></tr></table></figure>
+
+
+<blockquote>
+<p>操作系统：Windows 10 专业版 19042.685<br>编译机：WSL2 Ubuntu-18.04<br>手机：Google Pixel 3 Android 11<br>源码版本：kernel android-msm-crosshatch-4.9-android11</p>
+</blockquote>
+<blockquote>
+<p>参考1: <a target="_blank" rel="noopener" href="https://source.android.com/setup/build/building-kernels">构建内核  |  Android 开源项目  |  Android Open Source Project</a><br>参考2: <a target="_blank" rel="noopener" href="https://groups.google.com/g/android-building/c/ou630PviyDc">Touchscreen not working after building and flashing clean msm kernel for the Google Pixel blueline</a></p>
+</blockquote>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/" class="category-chain-item">工具使用</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E6%95%99%E7%A8%8B/" class="print-no-link">#教程</a>
+      
+        <a href="/tags/Android%E7%B3%BB%E7%BB%9F/" class="print-no-link">#Android系统</a>
+      
+        <a href="/tags/Linux/" class="print-no-link">#Linux</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Pixel 3上Linux内核源码的下载，编译与烧录</div>
+      <div>https://hqw700.github.io/2021/01/02/aosp-kernel-build/</div>
+    </div>
+    <div class="license-meta">
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2021年1月2日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2021/01/05/java-binder-gen/" title="【一起来学binder】java端代码生成">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">【一起来学binder】java端代码生成</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/01/01/aosp-build/" title="Pixel 3上Android 11源码下载，编译与烧录">
+                        <span class="hidden-mobile">Pixel 3上Android 11源码下载，编译与烧录</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+    <div class="statistics">
+  
+  
+
+  
+    
+      <span id="busuanzi_container_site_pv" style="display: none">
+        总访问量 
+        <span id="busuanzi_value_site_pv"></span>
+         次
+      </span>
+    
+    
+      <span id="busuanzi_container_site_uv" style="display: none">
+        总访客数 
+        <span id="busuanzi_value_site_uv"></span>
+         人
+      </span>
+    
+    
+
+  
+
+</div>
+
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
