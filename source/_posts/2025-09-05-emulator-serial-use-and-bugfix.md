@@ -66,7 +66,7 @@ adb reboot
 393 crw------- 1 root root u:object_r:serial_device:s0  204,  64 2025-09-04 23:56 /dev/ttyAMA0
 ```
 ## 三，在user版本中使用串口
-正在在user版本中是无法使用串口的，可以修改init.rc， 在user版本中启动串口并支持root
+当前在user版本中是无法使用串口的，可以修改init.rc，user版本时启动串口并支持root
 ``` diff
 system/core$ git diff .
 diff --git a/rootdir/init.rc b/rootdir/init.rc
