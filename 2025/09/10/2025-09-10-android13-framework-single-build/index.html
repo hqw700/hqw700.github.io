@@ -19,24 +19,24 @@
   <meta name="author" content="">
   <meta name="keywords" content="">
   
-    <meta name="description" content="emulator串口的基本使用，以及修复串口无法使用问题">
+    <meta name="description" content="Android13 framework.jar单独编译">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Android Emulator串口使用和问题处理">
-<meta property="og:url" content="https://hqw700.github.io/2025/09/05/2025-09-05-emulator-serial-use-and-bugfix/index.html">
+<meta property="og:title" content="Android13 framework单独编译">
+<meta property="og:url" content="https://hqw700.github.io/2025/09/10/2025-09-10-android13-framework-single-build/index.html">
 <meta property="og:site_name" content="不秃的Android世界">
-<meta property="og:description" content="emulator串口的基本使用，以及修复串口无法使用问题">
+<meta property="og:description" content="Android13 framework.jar单独编译">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2025-09-04T16:16:00.000Z">
-<meta property="article:modified_time" content="2025-09-07T16:18:56.774Z">
-<meta property="article:tag" content="虚拟化">
-<meta property="article:tag" content="bugfix">
+<meta property="article:published_time" content="2025-09-10T08:51:00.000Z">
+<meta property="article:modified_time" content="2025-09-10T09:24:19.413Z">
+<meta property="article:tag" content="Android系统">
+<meta property="article:tag" content="奇技淫巧">
 <meta name="twitter:card" content="summary_large_image">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>Android Emulator串口使用和问题处理 - 不秃的Android世界</title>
+  <title>Android13 framework单独编译 - 不秃的Android世界</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -202,7 +202,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="Android Emulator串口使用和问题处理"></span>
+            <span id="subtitle" data-typed-text="Android13 framework单独编译"></span>
           
         </div>
 
@@ -213,8 +213,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2025-09-05 00:16" pubdate>
-          2025年9月5日 凌晨
+        <time datetime="2025-09-10 16:51" pubdate>
+          2025年9月10日 下午
         </time>
       </span>
     
@@ -257,60 +257,24 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">Android Emulator串口使用和问题处理</h1>
+            <h1 id="seo-header">Android13 framework单独编译</h1>
             
             
               <div class="markdown-body">
                 
-                <h2 id="一，基本使用"><a href="#一，基本使用" class="headerlink" title="一，基本使用"></a>一，基本使用</h2><p>在模拟器启动时，可以通过参数 –shell-serial 指定串口功能，有以下几种参数</p>
-<table>
-<thead>
-<tr>
-<th>启动命令</th>
-<th>连接方式</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>-shell-serial stdio</td>
-<td>当前终端</td>
-</tr>
-<tr>
-<td>-shell-serial tcp::4444,server,nowait</td>
-<td>socat -,raw,echo&#x3D;0,escape&#x3D;0x04 TCP:localhost:4444 （ctrl + d exit）</td>
-</tr>
-<tr>
-<td>-shell-serial unix:&#x2F;tmp&#x2F;emu-console,server,nowait</td>
-<td>socat -,raw,echo&#x3D;0,escape&#x3D;0x04 unix:&#x2F;tmp&#x2F;emu-console （ctrl + d exit）</td>
-</tr>
-</tbody></table>
-<h2 id="二，串口无法使用问题处理"><a href="#二，串口无法使用问题处理" class="headerlink" title="二，串口无法使用问题处理"></a>二，串口无法使用问题处理</h2><h3 id="调试"><a href="#调试" class="headerlink" title="调试"></a>调试</h3><ul>
-<li><p>手动启动串口，adb root shell 中：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">setprop ctl.start console</span><br></code></pre></td></tr></table></figure>
-</li>
-<li><p>dmesg log</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs log">init: Control message: Could not ctl.start for &#x27;console&#x27; from pid: 5156 (setprop ctl.start console): Couldn&#x27;t open console &#x27;/dev/ttyAMA0&#x27;: Permission denied<br>[  408.263647] type=1400 audit(1756997294.564:1863): avc: denied &#123; read write &#125; for comm=&quot;init&quot; name=&quot;ttyAMA0&quot; dev=&quot;tmpfs&quot; ino=331 scontext=u:r:init:s0 tcontext=u:object_r:device:s0 tclass=chr_file permissive=0<br></code></pre></td></tr></table></figure>
-</li>
-<li><p><code>chmod 777 /dev/ttyAMA0</code>问题一样</p>
-</li>
-<li><p><code>setenforce 0</code>串口正常</p>
-</li>
-<li><p>查看selinux权限</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash"><span class="hljs-built_in">ls</span> -liZ /dev/ttyAMA0</span>                                                                                                                                   <br>331 crw-rw-rw- 1 root root u:object_r:device:s0  204,  64 2025-09-04 22:41 /dev/ttyAMA0<br></code></pre></td></tr></table></figure></li>
+                <blockquote>
+<p>之前一直用<code>make framework</code>单独编译framework.jar，在android13发现无效了。</p>
+</blockquote>
+<h2 id="单独编译framework（user和userdebug版本中均可使用）"><a href="#单独编译framework（user和userdebug版本中均可使用）" class="headerlink" title="单独编译framework（user和userdebug版本中均可使用）"></a>单独编译framework（user和userdebug版本中均可使用）</h2><figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs powershell"><span class="hljs-variable">$</span> make <span class="hljs-literal">-j8</span> framework<span class="hljs-literal">-minus-apex</span> | <span class="hljs-built_in">tee</span><br></code></pre></td></tr></table></figure>
+<ul>
+<li>生成<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><code class="hljs awk">out<span class="hljs-regexp">/target/</span>product<span class="hljs-regexp">/xxx/</span>system<span class="hljs-regexp">/framework/</span>boot-ecloud-cust-client.vdex<br>out<span class="hljs-regexp">/target/</span>product<span class="hljs-regexp">/xxx/</span>system<span class="hljs-regexp">/framework/</span>framework.jar<br>out<span class="hljs-regexp">/target/</span>product<span class="hljs-regexp">/xxx/</span>system<span class="hljs-regexp">/framework/</span>boot-telephony-common.vdex<br>out<span class="hljs-regexp">/target/</span>product<span class="hljs-regexp">/xxx/</span>system<span class="hljs-regexp">/framework/</span>arm64/boot-ext.oat<br>out<span class="hljs-regexp">/target/</span>product<span class="hljs-regexp">/xxx/</span>system<span class="hljs-regexp">/framework/</span>arm64/boot-framework.oat<br>out<span class="hljs-regexp">/target/</span>product<span class="hljs-regexp">/xxx/</span>system<span class="hljs-regexp">/framework/</span>arm64/boot-core-icu4j.oat<br>out<span class="hljs-regexp">/target/</span>product<span class="hljs-regexp">/xxx/</span>system<span class="hljs-regexp">/framework/</span>arm64/boot-ctyun-framework.art<br>out<span class="hljs-regexp">/target/</span>product<span class="hljs-regexp">/xxx/</span>system<span class="hljs-regexp">/framework/</span>arm64/boot-ims-common.oat<br>out<span class="hljs-regexp">/target/</span>product<span class="hljs-regexp">/xxx/</span>system<span class="hljs-regexp">/framework/</span>arm64/boot-telephony-common.oat<br>out<span class="hljs-regexp">/target/</span>product<span class="hljs-regexp">/xxx/</span>system<span class="hljs-regexp">/framework/</span>arm64/boot-framework-graphics.art<br>out<span class="hljs-regexp">/target/</span>product<span class="hljs-regexp">/xxx/</span>system<span class="hljs-regexp">/framework/</span>arm64/boot-framework-graphics.oat<br>out<span class="hljs-regexp">/target/</span>product<span class="hljs-regexp">/xxx/</span>system<span class="hljs-regexp">/framework/</span>arm64/boot-telephony-common.art<br>out<span class="hljs-regexp">/target/</span>product<span class="hljs-regexp">/xxx/</span>system<span class="hljs-regexp">/framework/</span>arm64/boot-ctyun-framework.oat<br>out<span class="hljs-regexp">/target/</span>product<span class="hljs-regexp">/xxx/</span>system<span class="hljs-regexp">/framework/</span>arm64/boot-core-icu4j.art<br>out<span class="hljs-regexp">/target/</span>product<span class="hljs-regexp">/xxx/</span>system<span class="hljs-regexp">/framework/</span>arm64/boot-ext.art<br>out<span class="hljs-regexp">/target/</span>product<span class="hljs-regexp">/xxx/</span>system<span class="hljs-regexp">/framework/</span>arm64/boot-ecloud-cust-client.oat<br>out<span class="hljs-regexp">/target/</span>product<span class="hljs-regexp">/xxx/</span>system<span class="hljs-regexp">/framework/</span>arm64/boot-ims-common.art<br>out<span class="hljs-regexp">/target/</span>product<span class="hljs-regexp">/xxx/</span>system<span class="hljs-regexp">/framework/</span>arm64/boot-ecloud-cust-client.art<br>out<span class="hljs-regexp">/target/</span>product<span class="hljs-regexp">/xxx/</span>system<span class="hljs-regexp">/framework/</span>arm64/boot-framework.art<br>out<span class="hljs-regexp">/target/</span>product<span class="hljs-regexp">/xxx/</span>system<span class="hljs-regexp">/framework/</span>arm64/boot-voip-common.art<br>out<span class="hljs-regexp">/target/</span>product<span class="hljs-regexp">/xxx/</span>system<span class="hljs-regexp">/framework/</span>arm64/boot-voip-common.oat<br>out<span class="hljs-regexp">/target/</span>product<span class="hljs-regexp">/xxx/</span>system<span class="hljs-regexp">/framework/</span>boot-ctyun-framework.vdex<br>out<span class="hljs-regexp">/target/</span>product<span class="hljs-regexp">/xxx/</span>system<span class="hljs-regexp">/framework/</span>boot-framework-graphics.vdex<br>out<span class="hljs-regexp">/target/</span>product<span class="hljs-regexp">/xxx/</span>system<span class="hljs-regexp">/framework/</span>boot-ext.vdex<br>out<span class="hljs-regexp">/target/</span>product<span class="hljs-regexp">/xxx/</span>system<span class="hljs-regexp">/framework/</span>boot-framework.vdex<br>out<span class="hljs-regexp">/target/</span>product<span class="hljs-regexp">/xxx/</span>system<span class="hljs-regexp">/framework/</span>boot-voip-common.vdex<br>out<span class="hljs-regexp">/target/</span>product<span class="hljs-regexp">/xxx/</span>system<span class="hljs-regexp">/framework/</span>boot-core-icu4j.vdex<br>out<span class="hljs-regexp">/target/</span>product<span class="hljs-regexp">/xxx/</span>system<span class="hljs-regexp">/framework/</span>boot-ims-common.vdex<br>out<span class="hljs-regexp">/target/</span>product<span class="hljs-regexp">/xxx/</span>system<span class="hljs-regexp">/etc/</span>compatconfig/framework-platform-compat-config.xml<br>out<span class="hljs-regexp">/target/</span>product<span class="hljs-regexp">/xxx/</span>system<span class="hljs-regexp">/etc/</span>protolog.conf.json.gz<br></code></pre></td></tr></table></figure></li>
+<li>编译耗时（i9-12900K）<figure class="highlight clean"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs clean">#### build completed successfully (<span class="hljs-number">03</span>:<span class="hljs-number">15</span> (mm:ss)) ####<br></code></pre></td></tr></table></figure></li>
 </ul>
-<h3 id="Fixed"><a href="#Fixed" class="headerlink" title="Fixed"></a>Fixed</h3><ul>
-<li><p>修改aosp源码</p>
-<figure class="highlight diff"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs diff">device/generic/goldfish$ git diff <br><span class="hljs-comment">diff --git a/sepolicy/common/file_contexts b/sepolicy/common/file_contexts</span><br><span class="hljs-comment">index d58270b..f6a03d4 100644</span><br><span class="hljs-comment">--- a/sepolicy/common/file_contexts</span><br><span class="hljs-comment">+++ b/sepolicy/common/file_contexts</span><br><span class="hljs-meta">@@ -20,6 +20,7 @@</span><br> /dev/dri/renderD128          u:object_r:gpu_device:s0<br> /dev/ttyGF[0-9]*             u:object_r:serial_device:s0<br> /dev/ttyS2                   u:object_r:console_device:s0<br><span class="hljs-addition">+/dev/ttyAMA[0-9]*            u:object_r:serial_device:s0</span><br> <br> # kernel console<br> /dev/hvc0                    u:object_r:serial_device:s0<br></code></pre></td></tr></table></figure>
-</li>
-<li><p>编译</p>
-<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs mipsasm">make selinux_policy -<span class="hljs-keyword">j8</span><br><span class="hljs-keyword"></span>adb <span class="hljs-keyword">sync</span><br><span class="hljs-keyword"></span>adb reboot<br></code></pre></td></tr></table></figure></li>
-<li><p>重启后串口正常，查看selinux权限</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash"><span class="hljs-built_in">ls</span> /dev/ttyAMA0 -liZ</span><br>393 crw------- 1 root root u:object_r:serial_device:s0  204,  64 2025-09-04 23:56 /dev/ttyAMA0<br></code></pre></td></tr></table></figure></li>
-</ul>
-<h2 id="三，在user版本中使用串口"><a href="#三，在user版本中使用串口" class="headerlink" title="三，在user版本中使用串口"></a>三，在user版本中使用串口</h2><p>当前在user版本中是无法使用串口的，可以修改init.rc，user版本时启动串口并支持root</p>
-<figure class="highlight diff"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs diff">system/core$ git diff .<br><span class="hljs-comment">diff --git a/rootdir/init.rc b/rootdir/init.rc</span><br><span class="hljs-comment">index 2b53d88..5f3c0b4 100644</span><br><span class="hljs-comment">--- a/rootdir/init.rc</span><br><span class="hljs-comment">+++ b/rootdir/init.rc</span><br><span class="hljs-meta">@@ -475,6 +475,7 @@</span> on init<br>     start servicemanager<br>     start hwservicemanager<br>     start vndservicemanager<br><span class="hljs-addition">+    start console</span><br> <br> # Run boringssl self test for each ABI.  Any failures trigger reboot to firmware.<br> on init &amp;&amp; property:ro.product.cpu.abilist32=*<br><span class="hljs-meta">@@ -1264,9 +1265,9 @@</span> service console /system/bin/sh<br>     class core<br>     console<br>     disabled<br><span class="hljs-deletion">-    user shell</span><br><span class="hljs-deletion">-    group shell log readproc</span><br><span class="hljs-deletion">-    seclabel u:r:shell:s0</span><br><span class="hljs-addition">+    user root</span><br><span class="hljs-addition">+    group root log readproc</span><br><span class="hljs-addition">+    seclabel u:r:su:s0</span><br>     setenv HOSTNAME console<br> <br> on property:ro.debuggable=1<br></code></pre></td></tr></table></figure>
+<h2 id="通过adb更新（需要支持adb-remount）"><a href="#通过adb更新（需要支持adb-remount）" class="headerlink" title="通过adb更新（需要支持adb remount）"></a>通过adb更新（需要支持adb remount）</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">adb <span class="hljs-built_in">sync</span></span><br></code></pre></td></tr></table></figure>
+
 
 <blockquote>
-<p>操作系统：Mac mini M4<br>编译机：Ubuntu-22.04 AMD 5800X<br>手机：emulator 36.1 ARM64 on Mac<br>源码版本：AOSP android-13.0.0_r74</p>
+<p>源码版本：AOSP android-13.0.0_r74</p>
 </blockquote>
 
                 
@@ -330,7 +294,7 @@
     
       <span class="category-chain">
         
-  <a href="/categories/%E8%99%9A%E6%8B%9F%E5%8C%96/" class="category-chain-item">虚拟化</a>
+  <a href="/categories/Android%E7%B3%BB%E7%BB%9F/" class="category-chain-item">Android系统</a>
   
   
 
@@ -345,9 +309,9 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/tags/%E8%99%9A%E6%8B%9F%E5%8C%96/" class="print-no-link">#虚拟化</a>
+        <a href="/tags/Android%E7%B3%BB%E7%BB%9F/" class="print-no-link">#Android系统</a>
       
-        <a href="/tags/bugfix/" class="print-no-link">#bugfix</a>
+        <a href="/tags/%E5%A5%87%E6%8A%80%E6%B7%AB%E5%B7%A7/" class="print-no-link">#奇技淫巧</a>
       
     </div>
   
@@ -359,15 +323,15 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>Android Emulator串口使用和问题处理</div>
-      <div>https://hqw700.github.io/2025/09/05/2025-09-05-emulator-serial-use-and-bugfix/</div>
+      <div>Android13 framework单独编译</div>
+      <div>https://hqw700.github.io/2025/09/10/2025-09-10-android13-framework-single-build/</div>
     </div>
     <div class="license-meta">
       
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2025年9月5日</div>
+          <div>2025年9月10日</div>
         </div>
       
       
@@ -399,18 +363,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2025/09/10/2025-09-10-android13-framework-single-build/" title="Android13 framework单独编译">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">Android13 framework单独编译</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2024/04/29/2024-04-29-repo-patch-after-repo-diff/" title="给repo项目打patch">
-                        <span class="hidden-mobile">给repo项目打patch</span>
+                      <a href="/2025/09/05/2025-09-05-emulator-serial-use-and-bugfix/" title="Android Emulator串口使用和问题处理">
+                        <span class="hidden-mobile">Android Emulator串口使用和问题处理</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
