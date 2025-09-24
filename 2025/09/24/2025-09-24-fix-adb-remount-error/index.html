@@ -19,24 +19,23 @@
   <meta name="author" content="">
   <meta name="keywords" content="">
   
-    <meta name="description" content="Android13 framework.jar单独编译">
+    <meta name="description" content="修复rb5开发板，android13下adb remount失败问题。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Android13 framework单独编译">
-<meta property="og:url" content="https://hqw700.github.io/2025/09/10/2025-09-10-android13-framework-single-build/index.html">
+<meta property="og:title" content="修复adb remount失败问题">
+<meta property="og:url" content="https://hqw700.github.io/2025/09/24/2025-09-24-fix-adb-remount-error/index.html">
 <meta property="og:site_name" content="不秃的Android世界">
-<meta property="og:description" content="Android13 framework.jar单独编译">
+<meta property="og:description" content="修复rb5开发板，android13下adb remount失败问题。">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2025-09-10T08:51:00.000Z">
-<meta property="article:modified_time" content="2025-09-10T09:24:19.413Z">
-<meta property="article:tag" content="Android系统">
-<meta property="article:tag" content="奇技淫巧">
+<meta property="article:published_time" content="2025-09-24T03:01:00.000Z">
+<meta property="article:modified_time" content="2025-09-24T03:21:35.450Z">
+<meta property="article:tag" content="bugfix">
 <meta name="twitter:card" content="summary_large_image">
   
   
     <meta name="referrer" content="no-referrer-when-downgrade">
   
   
-  <title>Android13 framework单独编译 - 不秃的Android世界</title>
+  <title>修复adb remount失败问题 - 不秃的Android世界</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -202,7 +201,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="Android13 framework单独编译"></span>
+            <span id="subtitle" data-typed-text="修复adb remount失败问题"></span>
           
         </div>
 
@@ -213,8 +212,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2025-09-10 16:51" pubdate>
-          2025年9月10日 下午
+        <time datetime="2025-09-24 11:01" pubdate>
+          2025年9月24日 上午
         </time>
       </span>
     
@@ -257,24 +256,28 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">Android13 framework单独编译</h1>
+            <h1 id="seo-header">修复adb remount失败问题</h1>
             
             
               <div class="markdown-body">
                 
-                <blockquote>
-<p>之前一直用<code>make framework</code>单独编译framework.jar，在android13发现无效了。</p>
-</blockquote>
-<h2 id="单独编译framework（user和userdebug版本中均可使用）"><a href="#单独编译framework（user和userdebug版本中均可使用）" class="headerlink" title="单独编译framework（user和userdebug版本中均可使用）"></a>单独编译framework（user和userdebug版本中均可使用）</h2><figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs powershell"><span class="hljs-variable">$</span> make <span class="hljs-literal">-j8</span> framework<span class="hljs-literal">-minus-apex</span> | <span class="hljs-built_in">tee</span><br></code></pre></td></tr></table></figure>
+                <h2 id="一，错误log"><a href="#一，错误log" class="headerlink" title="一，错误log"></a>一，错误log</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ adb disable-verity<br>disable-verity only works <span class="hljs-keyword">for</span> userdebug builds<br>Overlayfs setup failed with error No such process<br>Now reboot your device <span class="hljs-keyword">for</span> settings to take effect<br>$ adb remount<br>virtual bool android::fiemap::ImageManagerBinder::MapImageDevice(const std::string &amp;, const std::chrono::milliseconds &amp;, std::string *) binder returned: Failed to map<br>[libfs_mgr]could not map scratch image<br>Overlayfs setup <span class="hljs-keyword">for</span> /system failed, skipping: No such process<br>virtual bool android::fiemap::ImageManagerBinder::MapImageDevice(const std::string &amp;, const std::chrono::milliseconds &amp;, std::string *) binder returned: Failed to map<br>[libfs_mgr]could not map scratch image<br>Overlayfs setup <span class="hljs-keyword">for</span> /vendor failed, skipping: No such process<br>virtual bool android::fiemap::ImageManagerBinder::MapImageDevice(const std::string &amp;, const std::chrono::milliseconds &amp;, std::string *) binder returned: Failed to map<br>[libfs_mgr]could not map scratch image<br>Overlayfs setup <span class="hljs-keyword">for</span> /system_ext failed, skipping: No such process<br>virtual bool android::fiemap::ImageManagerBinder::MapImageDevice(const std::string &amp;, const std::chrono::milliseconds &amp;, std::string *) binder returned: Failed to map<br>[libfs_mgr]could not map scratch image<br>Overlayfs setup <span class="hljs-keyword">for</span> /product failed, skipping: No such process<br>No partitions to remount<br>remount failed<br></code></pre></td></tr></table></figure>
+<h3 id="logcat"><a href="#logcat" class="headerlink" title="logcat"></a>logcat</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs log">01-01 05:57:42.090  2567  2567 W device-mapper: table: 254:4: len=139924 not aligned to h/w logical block size 4096 of sda12<br>01-01 05:57:42.101  2567  2567 E device-mapper: core: Cannot calculate initial queue limits<br>01-01 05:57:42.108  2567  2567 W device-mapper: ioctl: unable to set up device queue for new table.<br>08-15 16:03:17.785  2567  2567 E gsid    : DM_TABLE_LOAD failed: Invalid argument<br>08-15 16:03:17.811  2567  2567 E gsid    : Didn&#x27;t generate uevent for [scratch] removal<br>08-15 16:03:17.811  2567  2567 E gsid    : Error creating device-mapper node for image scratch<br>08-15 16:03:17.812  2564  2564 E remount : virtual bool android::fiemap::ImageManagerBinder::MapImageDevice(const std::string &amp;, const std::chrono::milliseconds &amp;, std::string *) binder returned: Failed to map<br>08-15 16:03:17.812  2564  2564 E remount : [libfs_mgr]could not map scratch image<br>08-15 16:03:17.812  2564  2564 E remount : Overlayfs setup for /system failed, skipping: No such process<br>01-01 05:57:42.153  2567  2567 W device-mapper: table: 254:4: len=139924 not aligned to h/w logical block size 4096 of sda12<br>01-01 05:57:42.163  2567  2567 E device-mapper: core: Cannot calculate initial queue limits<br>01-01 05:57:42.171  2567  2567 W device-mapper: ioctl: unable to set up device queue for new table.<br>08-15 16:03:17.848  2567  2567 E gsid    : DM_TABLE_LOAD failed: Invalid argument<br>08-15 16:03:17.848  2567  2567 E gsid    : Didn&#x27;t generate uevent for [scratch] removal<br>08-15 16:03:17.848  2567  2567 E gsid    : Error creating device-mapper node for image scratch<br>08-15 16:03:17.848  2564  2564 E remount : virtual bool android::fiemap::ImageManagerBinder::MapImageDevice(const std::string &amp;, const std::chrono::milliseconds &amp;, std::string *) binder returned: Failed to map<br>08-15 16:03:17.848  2564  2564 E remount : [libfs_mgr]could not map scratch image<br>08-15 16:03:17.848  2564  2564 E remount : Overlayfs setup for /vendor failed, skipping: No such process<br></code></pre></td></tr></table></figure>
+
+<h2 id="二，fixed"><a href="#二，fixed" class="headerlink" title="二，fixed"></a>二，fixed</h2><p>关键错误： <strong>device-mapper: table: 254:4: len&#x3D;139924 not aligned to h&#x2F;w logical block size 4096 of sda12</strong></p>
 <ul>
-<li>生成<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><code class="hljs awk">out<span class="hljs-regexp">/target/</span>product<span class="hljs-regexp">/xxx/</span>system<span class="hljs-regexp">/framework/</span>boot-ecloud-cust-client.vdex<br>out<span class="hljs-regexp">/target/</span>product<span class="hljs-regexp">/xxx/</span>system<span class="hljs-regexp">/framework/</span>framework.jar<br>out<span class="hljs-regexp">/target/</span>product<span class="hljs-regexp">/xxx/</span>system<span class="hljs-regexp">/framework/</span>boot-telephony-common.vdex<br>out<span class="hljs-regexp">/target/</span>product<span class="hljs-regexp">/xxx/</span>system<span class="hljs-regexp">/framework/</span>arm64/boot-ext.oat<br>out<span class="hljs-regexp">/target/</span>product<span class="hljs-regexp">/xxx/</span>system<span class="hljs-regexp">/framework/</span>arm64/boot-framework.oat<br>out<span class="hljs-regexp">/target/</span>product<span class="hljs-regexp">/xxx/</span>system<span class="hljs-regexp">/framework/</span>arm64/boot-core-icu4j.oat<br>out<span class="hljs-regexp">/target/</span>product<span class="hljs-regexp">/xxx/</span>system<span class="hljs-regexp">/framework/</span>arm64/boot-ctyun-framework.art<br>out<span class="hljs-regexp">/target/</span>product<span class="hljs-regexp">/xxx/</span>system<span class="hljs-regexp">/framework/</span>arm64/boot-ims-common.oat<br>out<span class="hljs-regexp">/target/</span>product<span class="hljs-regexp">/xxx/</span>system<span class="hljs-regexp">/framework/</span>arm64/boot-telephony-common.oat<br>out<span class="hljs-regexp">/target/</span>product<span class="hljs-regexp">/xxx/</span>system<span class="hljs-regexp">/framework/</span>arm64/boot-framework-graphics.art<br>out<span class="hljs-regexp">/target/</span>product<span class="hljs-regexp">/xxx/</span>system<span class="hljs-regexp">/framework/</span>arm64/boot-framework-graphics.oat<br>out<span class="hljs-regexp">/target/</span>product<span class="hljs-regexp">/xxx/</span>system<span class="hljs-regexp">/framework/</span>arm64/boot-telephony-common.art<br>out<span class="hljs-regexp">/target/</span>product<span class="hljs-regexp">/xxx/</span>system<span class="hljs-regexp">/framework/</span>arm64/boot-ctyun-framework.oat<br>out<span class="hljs-regexp">/target/</span>product<span class="hljs-regexp">/xxx/</span>system<span class="hljs-regexp">/framework/</span>arm64/boot-core-icu4j.art<br>out<span class="hljs-regexp">/target/</span>product<span class="hljs-regexp">/xxx/</span>system<span class="hljs-regexp">/framework/</span>arm64/boot-ext.art<br>out<span class="hljs-regexp">/target/</span>product<span class="hljs-regexp">/xxx/</span>system<span class="hljs-regexp">/framework/</span>arm64/boot-ecloud-cust-client.oat<br>out<span class="hljs-regexp">/target/</span>product<span class="hljs-regexp">/xxx/</span>system<span class="hljs-regexp">/framework/</span>arm64/boot-ims-common.art<br>out<span class="hljs-regexp">/target/</span>product<span class="hljs-regexp">/xxx/</span>system<span class="hljs-regexp">/framework/</span>arm64/boot-ecloud-cust-client.art<br>out<span class="hljs-regexp">/target/</span>product<span class="hljs-regexp">/xxx/</span>system<span class="hljs-regexp">/framework/</span>arm64/boot-framework.art<br>out<span class="hljs-regexp">/target/</span>product<span class="hljs-regexp">/xxx/</span>system<span class="hljs-regexp">/framework/</span>arm64/boot-voip-common.art<br>out<span class="hljs-regexp">/target/</span>product<span class="hljs-regexp">/xxx/</span>system<span class="hljs-regexp">/framework/</span>arm64/boot-voip-common.oat<br>out<span class="hljs-regexp">/target/</span>product<span class="hljs-regexp">/xxx/</span>system<span class="hljs-regexp">/framework/</span>boot-ctyun-framework.vdex<br>out<span class="hljs-regexp">/target/</span>product<span class="hljs-regexp">/xxx/</span>system<span class="hljs-regexp">/framework/</span>boot-framework-graphics.vdex<br>out<span class="hljs-regexp">/target/</span>product<span class="hljs-regexp">/xxx/</span>system<span class="hljs-regexp">/framework/</span>boot-ext.vdex<br>out<span class="hljs-regexp">/target/</span>product<span class="hljs-regexp">/xxx/</span>system<span class="hljs-regexp">/framework/</span>boot-framework.vdex<br>out<span class="hljs-regexp">/target/</span>product<span class="hljs-regexp">/xxx/</span>system<span class="hljs-regexp">/framework/</span>boot-voip-common.vdex<br>out<span class="hljs-regexp">/target/</span>product<span class="hljs-regexp">/xxx/</span>system<span class="hljs-regexp">/framework/</span>boot-core-icu4j.vdex<br>out<span class="hljs-regexp">/target/</span>product<span class="hljs-regexp">/xxx/</span>system<span class="hljs-regexp">/framework/</span>boot-ims-common.vdex<br>out<span class="hljs-regexp">/target/</span>product<span class="hljs-regexp">/xxx/</span>system<span class="hljs-regexp">/etc/</span>compatconfig/framework-platform-compat-config.xml<br>out<span class="hljs-regexp">/target/</span>product<span class="hljs-regexp">/xxx/</span>system<span class="hljs-regexp">/etc/</span>protolog.conf.json.gz<br></code></pre></td></tr></table></figure></li>
-<li>编译耗时（i9-12900K）<figure class="highlight clean"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs clean">#### build completed successfully (<span class="hljs-number">03</span>:<span class="hljs-number">15</span> (mm:ss)) ####<br></code></pre></td></tr></table></figure></li>
+<li><p>在代码中查看 BOARD_FLASH_BLOCK_SIZE</p>
+<figure class="highlight crystal"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs crystal"><span class="hljs-variable">$ </span>get_build_var BOARD_FLASH_BLOCK_SIZE<br><span class="hljs-number">131072</span><br></code></pre></td></tr></table></figure>
+</li>
+<li><p>修改</p>
+<figure class="highlight diff"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs diff"><span class="hljs-comment">diff --git a/rb5/BoardConfig.mk b/rb5/BoardConfig.mk</span><br><span class="hljs-comment">index 92f536b..c081250 100644</span><br><span class="hljs-comment">--- a/rb5/BoardConfig.mk</span><br><span class="hljs-comment">+++ b/rb5/BoardConfig.mk</span><br><span class="hljs-meta">@@ -38,7 +38,7 @@</span> BOARD_BOOTCONFIG += androidboot.verifiedbootstate=orange<br> BOARD_BOOTIMAGE_PARTITION_SIZE := 103079215104 #96M<br> BOARD_VENDOR_BOOTIMAGE_PARTITION_SIZE := 103079215104 #96M<br> BOARD_USERDATAIMAGE_PARTITION_SIZE := 21474836480<br><span class="hljs-deletion">-BOARD_FLASH_BLOCK_SIZE := 131072</span><br><span class="hljs-addition">+BOARD_FLASH_BLOCK_SIZE := 4096</span><br></code></pre></td></tr></table></figure></li>
 </ul>
-<h2 id="通过adb更新（需要支持adb-remount）"><a href="#通过adb更新（需要支持adb-remount）" class="headerlink" title="通过adb更新（需要支持adb remount）"></a>通过adb更新（需要支持adb remount）</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">adb <span class="hljs-built_in">sync</span></span><br></code></pre></td></tr></table></figure>
-
-
+<h2 id="三，问题总结"><a href="#三，问题总结" class="headerlink" title="三，问题总结"></a>三，问题总结</h2><p>本次 adb remount 失败的核心原因在于 BoardConfig 中定义的闪存块大小（BOARD_FLASH_BLOCK_SIZE）与硬件实际的逻辑块大小不匹配，导致了 device-mapper 在创建 OverlayFS 所需的 scratch 设备时出现地址对齐错误。</p>
+<ul>
+<li>官方修复<br>查了下，官方已修复这个问题<br><a target="_blank" rel="noopener" href="https://android-review.googlesource.com/c/device/linaro/dragonboard/+/2164963">https://android-review.googlesource.com/c/device/linaro/dragonboard/+/2164963</a><figure class="highlight fortran"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs fortran">db845c: Set the flash <span class="hljs-keyword">block</span> <span class="hljs-built_in">size</span> to <span class="hljs-number">4096</span><br><br><span class="hljs-keyword">While</span> running system/core/fs_mgr/tests/adb-remount-test.sh<br>device-mapper reports h/w <span class="hljs-keyword">logical</span> <span class="hljs-keyword">block</span> <span class="hljs-built_in">size</span> to be <span class="hljs-number">4096.</span><br>So updating the BOARD_FLASH_BLOCK_SIZE accordingly.<br><br>Signed-off-by: Amit Pundir &lt;amit.pundir@linaro.org&gt;<br><span class="hljs-built_in">Change</span>-Id: Ia300194969da0bfb5ab47b77b130da7be3acc577<br></code></pre></td></tr></table></figure></li>
+</ul>
 <blockquote>
-<p>源码版本：AOSP android-13.0.0_r74</p>
+<p>编译机：Ubuntu-22.04 AMD 5800X<br>手机：Qualcomm Robotics RB5<br>源码版本：AOSP android-13.0.0_r74<br>内核版本：common-android13-5.15</p>
 </blockquote>
 
                 
@@ -294,7 +297,7 @@
     
       <span class="category-chain">
         
-  <a href="/categories/Android%E7%B3%BB%E7%BB%9F/" class="category-chain-item">Android系统</a>
+  <a href="/categories/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/" class="category-chain-item">工具使用</a>
   
   
 
@@ -309,9 +312,7 @@
     <div class="post-meta">
       <i class="iconfont icon-tags"></i>
       
-        <a href="/tags/Android%E7%B3%BB%E7%BB%9F/" class="print-no-link">#Android系统</a>
-      
-        <a href="/tags/%E5%A5%87%E6%8A%80%E6%B7%AB%E5%B7%A7/" class="print-no-link">#奇技淫巧</a>
+        <a href="/tags/bugfix/" class="print-no-link">#bugfix</a>
       
     </div>
   
@@ -323,15 +324,15 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>Android13 framework单独编译</div>
-      <div>https://hqw700.github.io/2025/09/10/2025-09-10-android13-framework-single-build/</div>
+      <div>修复adb remount失败问题</div>
+      <div>https://hqw700.github.io/2025/09/24/2025-09-24-fix-adb-remount-error/</div>
     </div>
     <div class="license-meta">
       
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2025年9月10日</div>
+          <div>2025年9月24日</div>
         </div>
       
       
@@ -363,18 +364,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2025/09/24/2025-09-24-fix-adb-remount-error/" title="修复adb remount失败问题">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">修复adb remount失败问题</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2025/09/05/2025-09-05-emulator-serial-use-and-bugfix/" title="Android Emulator串口使用和问题处理">
-                        <span class="hidden-mobile">Android Emulator串口使用和问题处理</span>
+                      <a href="/2025/09/10/2025-09-10-android13-framework-single-build/" title="Android13 framework单独编译">
+                        <span class="hidden-mobile">Android13 framework单独编译</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
