@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://hqw700.github.io/2025/09/29/2025-09-29-some-env-proxy-setting/</loc>
+    <lastmod>2025-09-29</lastmod>
+  </url>
+  <url>
     <loc>https://hqw700.github.io/2025/09/24/2025-09-24-fix-adb-remount-error/</loc>
-    <lastmod>2025-09-24</lastmod>
+    <lastmod>2025-09-29</lastmod>
   </url>
   <url>
     <loc>https://hqw700.github.io/2025/09/10/2025-09-10-android13-framework-single-build/</loc>
